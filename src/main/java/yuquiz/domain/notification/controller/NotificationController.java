@@ -22,9 +22,9 @@ public class NotificationController {
 
     @GetMapping("/users/my/alert")
     public ResponseEntity<?> getAllMyAlert(@AuthenticationPrincipal SecurityUserDetails userDetails,
-                                           @RequestParam(value = "page") Integer page,
-                                           @RequestParam(value = "sort") NotificationSortType sort,
-                                           @RequestParam(value = "view") DisplayType displayType) {
+                                           @RequestParam(value = "page", defaultValue = "0") Integer page,
+                                           @RequestParam(value = "sort", defaultValue = "DATE_DESC") NotificationSortType sort,
+                                           @RequestParam(value = "view", defaultValue = "UNCHECKED") DisplayType displayType) {
 
         Page<NotificationRes> notifications = notificationService.getAllNotification(userDetails.getId(), page, sort, displayType);
 
