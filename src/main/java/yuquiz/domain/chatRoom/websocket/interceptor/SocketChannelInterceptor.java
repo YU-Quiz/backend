@@ -43,6 +43,12 @@ public class SocketChannelInterceptor implements ChannelInterceptor {
         if (StompCommand.SEND.equals(accessor.getCommand())) {
             handleSend(accessor);
         }
+
+        // 웹소켓 연결 끊을 시
+        if (StompCommand.DISCONNECT.equals(accessor.getCommand())) {
+            handleDisConnect(accessor);
+        }
+
         return message;
     }
 
@@ -70,6 +76,18 @@ public class SocketChannelInterceptor implements ChannelInterceptor {
         if (!chatRoomService.isChatMemberForSendMessage(userId, roomId)) {
             throw new ChatSendException(ChatRoomExceptionCode.CANNOT_SEND_MESSAGE);
         }
+    }
+
+    private void handleDisConnect(StompHeaderAccessor accessor) {
+        String roomIdStr = accessor.getFirstNativeHeader("roomId");
+
+        if (roomIdStr == null) {  // 서버에서 보낸 자동 disconnect는 무시
+            return;
+        }
+        Long roomId = Long.valueOf(roomIdStr);
+        Long userId = getUserId(accessor);
+
+        chatRoomService.exitChatRoom(userId, roomId);
     }
 
     private Long getRoomId(StompHeaderAccessor accessor) {

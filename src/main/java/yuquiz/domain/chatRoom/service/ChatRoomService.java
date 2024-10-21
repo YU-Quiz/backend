@@ -38,4 +38,11 @@ public class ChatRoomService {
         String key = CHAT_PREFIX + roomId + MEMBER_PREFIX + userId;
         return redisUtil.existed(key);
     }
+
+    /* 채팅방 퇴장 시 */
+    public void exitChatRoom(Long userId, Long roomId) {
+
+        String key = CHAT_PREFIX + roomId + MEMBER_PREFIX + userId;
+        redisUtil.del(key);
+    }
 }
