@@ -11,6 +11,14 @@ import yuquiz.domain.series.entity.Series;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "QuizSeries",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "quizSeries",
+                        columnNames = {"series_id", "quiz_id"}
+                )
+        }
+)
 public class QuizSeries {
 
     @Id

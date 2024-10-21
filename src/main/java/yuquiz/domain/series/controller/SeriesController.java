@@ -30,7 +30,7 @@ public class SeriesController implements SeriesApi {
 
         seriesService.createSeries(seriesReq, userDetails.getId());
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(SuccessRes.from("문제집이 생성되었습니다."));
+        return ResponseEntity.status(HttpStatus.CREATED).body(SuccessRes.from("문제집 생성 성공"));
     }
 
     @Override
@@ -49,6 +49,15 @@ public class SeriesController implements SeriesApi {
         seriesService.deleteSeriesById(seriesId, userDetails.getId());
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @Override
+    @PutMapping("/{seriesId}")
+    public ResponseEntity<?> updateSeriesById(@PathVariable(value = "seriesId") Long seriesId, @RequestBody @Valid SeriesReq seriesReq, @AuthenticationPrincipal SecurityUserDetails userDetails) {
+
+        seriesService.updateSeriesById(seriesId, seriesReq, userDetails.getId());
+
+        return ResponseEntity.status(HttpStatus.OK).body(SuccessRes.from("문제집 수정 성공"));
     }
 
     @Override

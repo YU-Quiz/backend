@@ -91,6 +91,37 @@ public interface SeriesApi {
     })
     ResponseEntity<?> deleteSeriesById(@PathVariable(value = "seriesId") Long seriesId, @AuthenticationPrincipal SecurityUserDetails userDetails);
 
+    @Operation(summary = "문제집 상세정보 수정", description = "문제집 상세정보를 수정하는 API")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "수정 성공",
+                    content = @Content(mediaType = "application/json", examples = {
+                            @ExampleObject(value = """
+                                    {
+                                        "response": "문제집 수정 성공"
+                                    }
+                                    """)
+                    })),
+            @ApiResponse(responseCode = "400", description = "유효성 검사 실패",
+                    content = @Content(mediaType = "application/json", examples = {
+                            @ExampleObject(value = """
+                                    {
+                                        "name": "문제집 이름은 필수 입력입니다.",
+                                        "studyId": "스터디ID는 1 이상이어야 합니다."
+                                    }
+                                    """)
+                    })),
+            @ApiResponse(responseCode = "403", description = "권한 없음",
+                    content = @Content(mediaType = "application/json", examples = {
+                            @ExampleObject(value = """
+                                    {
+                                        "status": 403,
+                                        "message": "권한이 없습니다."
+                                    }
+                                    """)
+                    }))
+    })
+    ResponseEntity<?> updateSeriesById(@PathVariable(value = "seriesId") Long seriesId, @RequestBody @Valid SeriesReq seriesReq, @AuthenticationPrincipal SecurityUserDetails userDetails);
+
     @Operation(summary = "문제집 목록 조회", description = "문제집 목록을 조회하는 API")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "조회 성공",

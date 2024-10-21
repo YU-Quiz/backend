@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import yuquiz.common.entity.BaseTimeEntity;
 import yuquiz.domain.quizSeries.entity.QuizSeries;
+import yuquiz.domain.series.dto.SeriesReq;
 import yuquiz.domain.study.entity.Study;
 import yuquiz.domain.user.entity.User;
 
@@ -42,6 +43,11 @@ public class Series extends BaseTimeEntity {
     public Series(String name, User creator, Study study) {
         this.name = name;
         this.creator = creator;
+        this.study = study;
+    }
+
+    public void update(SeriesReq seriesReq, Study study) {
+        this.name = seriesReq.name();
         this.study = study;
     }
 }

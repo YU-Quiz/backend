@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import yuquiz.common.exception.CustomException;
 import yuquiz.domain.series.dto.SeriesReq;
 import yuquiz.domain.series.dto.SeriesRes;
@@ -34,6 +35,7 @@ public class SeriesService {
 
     private final Integer SERIES_PER_PAGE = 20;
 
+    @Transactional(readOnly = true)
     public void createSeries(SeriesReq seriesReq, Long userId) {
 
         User user = userRepository.findById(userId)
@@ -52,6 +54,7 @@ public class SeriesService {
         seriesRepository.save(seriesReq.toEntity(user, study));
     }
 
+    @Transactional(readOnly = true)
     public SeriesRes findSeriesById(Long seriesId, Long userId) {
 
         Series series = seriesRepository.findById(seriesId)
@@ -68,6 +71,7 @@ public class SeriesService {
         return SeriesRes.fromEntity(series);
     }
 
+    @Transactional
     public void deleteSeriesById(Long seriesId, Long userId) {
 
         if (!validateCreator(seriesId, userId)) {
@@ -77,6 +81,26 @@ public class SeriesService {
         seriesRepository.deleteById(seriesId);
     }
 
+    @Transactional
+    public void updateSeriesById(Long seriesId, SeriesReq seriesReq, Long userId) {
+
+        if (!validateCreator(seriesId, userId)) {
+            throw new CustomException(SeriesExceptionCode.UNAUTHORIZED_ACTION);
+        }
+
+        Study study = null;
+        if (seriesReq.studyId() != null) {
+            study = studyRepository.findById(seriesReq.studyId())
+                    .orElseThrow(() -> new CustomException(StudyExceptionCode.INVALID_ID));
+        }
+
+        Series series = seriesRepository.findById(seriesId)
+                .orElseThrow(() -> new CustomException(SeriesExceptionCode.INVALID_ID));
+
+        series.update(seriesReq, study);
+    }
+
+    @Transactional(readOnly = true)
     public Page<SeriesSummaryRes> getSeriesSummary(String keyword, SeriesSortType sort, Integer page) {
 
         Pageable pageable = PageRequest.of(page, SERIES_PER_PAGE, sort.getSort());
