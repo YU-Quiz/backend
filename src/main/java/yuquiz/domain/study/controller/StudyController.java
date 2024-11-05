@@ -103,4 +103,14 @@ public class StudyController implements StudyApi {
 
         return ResponseEntity.status(HttpStatus.OK).body(studyService.getMembers(studyId, userDetails.getId()));
     }
+
+    @DeleteMapping("/{studyId}/member")
+    public ResponseEntity<?> deleteMember(@PathVariable(value = "studyId") Long studyId,
+                                          @RequestParam(value = "id") Long deleteUserId,
+                                          @AuthenticationPrincipal SecurityUserDetails userDetails) {
+
+        studyService.deleteUser(studyId, userDetails.getId(), deleteUserId);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 }

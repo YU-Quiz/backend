@@ -157,6 +157,15 @@ public class StudyService {
         return studyUsers.stream().map(StudyUserRes::fromEntity).toList();
     }
 
+    @Transactional
+    public void deleteUser(Long studyId, Long userId, Long deleteId) {
+        if (!validateLeader(studyId, userId)) {
+            throw new CustomException(StudyExceptionCode.UNAUTHORIZED_ACTION);
+        }
+
+        studyUserRepository.deleteByStudy_IdAndUser_Id(studyId, deleteId);
+    }
+
     private boolean validateLeader(Long studyId, Long userId) {
         return studyRepository.findLeaderById(studyId)
                 .map(leaderId -> leaderId.equals(userId))
