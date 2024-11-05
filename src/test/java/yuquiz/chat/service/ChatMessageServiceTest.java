@@ -1,6 +1,5 @@
 package yuquiz.chat.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,8 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import yuquiz.common.exception.CustomException;
 import yuquiz.common.utils.redis.RedisUtil;
-import yuquiz.domain.chatRoom.dto.MessageReq;
-import yuquiz.domain.chatRoom.dto.MessageRes;
+import yuquiz.domain.chatRoom.dto.Message;
 import yuquiz.domain.chatRoom.dto.MessageType;
 import yuquiz.domain.chatRoom.entity.ChatMessage;
 import yuquiz.domain.chatRoom.entity.ChatRoom;
@@ -21,7 +19,6 @@ import yuquiz.domain.chatRoom.repository.ChatRoomRepository;
 import yuquiz.domain.chatRoom.service.ChatMessageService;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -51,16 +48,13 @@ public class ChatMessageServiceTest {
     @Mock
     private RedisUtil redisUtil;
 
-    @Mock
-    private ObjectMapper objectMapper;
-
     @InjectMocks
     private ChatMessageService chatMessageService;
 
-    private List<MessageReq> messages;
+    private List<Message> messages;
     private Long roomId;
-    private MessageReq messageReq1;
-    private MessageReq messageReq2;
+    private Message message1;
+    private Message message2;
 
     @BeforeEach
     void setUp() {
@@ -68,14 +62,14 @@ public class ChatMessageServiceTest {
 
         messages = new ArrayList<>();
 
-        messageReq1 =
-                new MessageReq("1", "테스터1", "내용1", "2024-11-05 12:00:00", MessageType.TALK);
-        messageReq2 =
-                new MessageReq("1", "테스터2", "내용2", "2024-11-05 12:00:00", MessageType.TALK);
+        message1 =
+                new Message("1", "테스터1", "내용1", "2024-11-05 12:00:00", MessageType.TALK);
+        message2 =
+                new Message("1", "테스터2", "내용2", "2024-11-05 12:00:00", MessageType.TALK);
 
 
-        messages.add(messageReq1);
-        messages.add(messageReq2);
+        messages.add(message1);
+        messages.add(message2);
     }
 
     @Test
@@ -119,20 +113,18 @@ public class ChatMessageServiceTest {
         given(chatMessageRepository.findMessagesByChatRoomIdAndDate(roomId, date)).willReturn(messages);
 
         // when
-        List<MessageRes> messageRes = chatMessageService.fetchMessagesByDateAndRoomId(roomId, date);
+        List<Message> messageRes = chatMessageService.fetchMessagesByDateAndRoomId(roomId, date);
 
         // then
         assertEquals(2, messageRes.size());
 
-        MessageRes firstMessage = messageRes.get(0);
+        Message firstMessage = messageRes.get(0);
         assertEquals("테스터1", firstMessage.sender());
         assertEquals("내용1", firstMessage.content());
-        assertEquals(LocalDateTime.parse("2024-11-05T12:00:00"), firstMessage.createdAt());
 
-        MessageRes secondMessage = messageRes.get(1);
+        Message secondMessage = messageRes.get(1);
         assertEquals("테스터2", secondMessage.sender());
         assertEquals("내용2", secondMessage.content());
-        assertEquals(LocalDateTime.parse("2024-11-05T12:00:00"), secondMessage.createdAt());
     }
 
     @Test
@@ -142,10 +134,10 @@ public class ChatMessageServiceTest {
         String key = MESSAGE_PREFIX + roomId;
 
         // when
-        chatMessageService.saveMessageInRedis(roomId, messageReq1);
+        chatMessageService.saveMessageInRedis(roomId, message1);
 
         // then
-        verify(redisUtil).setList(eq(key), any(MessageReq.class));
+        verify(redisUtil).setList(eq(key), any(Message.class));
     }
 
     @Test
@@ -163,18 +155,18 @@ public class ChatMessageServiceTest {
                 );
 
         // when
-        List<MessageReq> messages = chatMessageService.fetchMessagesFromRedis(roomId);
+        List<Message> messages = chatMessageService.fetchMessagesFromRedis(roomId);
 
         // then
         assertEquals(2, messages.size());
 
-        assertEquals(messageReq1.sender(), messages.get(0).sender());
-        assertEquals(messageReq1.content(), messages.get(0).content());
-        assertEquals(messageReq1.createdAt(), messages.get(0).createdAt());
+        assertEquals(message1.sender(), messages.get(0).sender());
+        assertEquals(message1.content(), messages.get(0).content());
+        assertEquals(message1.createdAt(), messages.get(0).createdAt());
 
-        assertEquals(messageReq2.sender(), messages.get(1).sender());
-        assertEquals(messageReq2.content(), messages.get(1).content());
-        assertEquals(messageReq2.createdAt(), messages.get(1).createdAt());
+        assertEquals(message2.sender(), messages.get(1).sender());
+        assertEquals(message2.content(), messages.get(1).content());
+        assertEquals(message2.createdAt(), messages.get(1).createdAt());
     }
 
     @Test
@@ -186,16 +178,16 @@ public class ChatMessageServiceTest {
         String key2 = MESSAGE_PREFIX + "2";
 
         when(redisUtil.getRoomIds()).thenReturn(roomIds);
-        when(redisUtil.getList(key1)).thenReturn(Collections.singletonList(messageReq1));
-        when(redisUtil.getList(key2)).thenReturn(Collections.singletonList(messageReq2));
+        when(redisUtil.getList(key1)).thenReturn(Collections.singletonList(message1));
+        when(redisUtil.getList(key2)).thenReturn(Collections.singletonList(message2));
 
         // when
-        Map<Long, List<MessageReq>> result = chatMessageService.getAllMessagesGroupedByRoomId();
+        Map<Long, List<Message>> result = chatMessageService.getAllMessagesGroupedByRoomId();
 
         // then
         assertEquals(2, result.size());
-        assertEquals(List.of(messageReq1), result.get(1L));
-        assertEquals(List.of(messageReq2), result.get(2L));
+        assertEquals(List.of(message1), result.get(1L));
+        assertEquals(List.of(message2), result.get(2L));
 
         verify(redisUtil).del(key1);
         verify(redisUtil).del(key2);

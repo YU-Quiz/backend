@@ -6,7 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
-import yuquiz.domain.chatRoom.dto.MessageReq;
+import yuquiz.domain.chatRoom.dto.Message;
 import yuquiz.domain.chatRoom.dto.MessageType;
 import yuquiz.domain.chatRoom.service.ChatMessageService;
 import yuquiz.domain.chatRoom.service.MessageScheduler;
@@ -31,9 +31,9 @@ public class MessageSchedulerTest {
     @Test
     public void testRunDailyMessageProcessJobTest() {
 
-        Map<Long, List<MessageReq>> testMessages = new HashMap<>();
-        testMessages.put(1L, List.of(new MessageReq("1", "테스터1", "내용1", "2024-11-05 12:00:00", MessageType.TALK)));
-        testMessages.put(2L, List.of(new MessageReq("1", "테스터2", "내용2", "2024-11-05 12:00:00", MessageType.TALK)));
+        Map<Long, List<Message>> testMessages = new HashMap<>();
+        testMessages.put(1L, List.of(new Message("1", "테스터1", "내용1", "2024-11-05 12:00:00", MessageType.TALK)));
+        testMessages.put(2L, List.of(new Message("1", "테스터2", "내용2", "2024-11-05 12:00:00", MessageType.TALK)));
 
         when(chatMessageService.getAllMessagesGroupedByRoomId()).thenReturn(testMessages);
 

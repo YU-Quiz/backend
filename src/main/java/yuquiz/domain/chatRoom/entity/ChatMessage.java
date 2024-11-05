@@ -17,8 +17,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import yuquiz.common.entity.BaseTimeEntity;
-import yuquiz.domain.chatRoom.converter.MessageReqListConverter;
-import yuquiz.domain.chatRoom.dto.MessageReq;
+import yuquiz.domain.chatRoom.converter.MessageListConverter;
+import yuquiz.domain.chatRoom.dto.Message;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,8 +33,8 @@ public class ChatMessage extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Convert(converter = MessageReqListConverter.class)
-    private List<MessageReq> messages;
+    @Convert(converter = MessageListConverter.class)
+    private List<Message> messages;
 
     @Column(name = "send_at")
     @CreatedDate
@@ -45,7 +45,7 @@ public class ChatMessage extends BaseTimeEntity {
     private ChatRoom chatRoom;
 
     @Builder
-    public ChatMessage(ChatRoom chatRoom, List<MessageReq> messages) {
+    public ChatMessage(ChatRoom chatRoom, List<Message> messages) {
         this.chatRoom = chatRoom;
         this.messages = messages;
     }

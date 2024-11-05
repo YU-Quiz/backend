@@ -1,13 +1,13 @@
 package yuquiz.domain.chatRoom.dto;
 
-public record MessageReq(
+public record Message(
         String roomId,
         String sender,
         String content,
         String createdAt,
         MessageType type
 ) {
-    public MessageReq of(String createdAt) {
-        return new MessageReq(roomId, sender, content, createdAt, type);
+    public Message of(String createdAt) {
+        return new Message(roomId, sender, content, createdAt, type);
     }
 }
