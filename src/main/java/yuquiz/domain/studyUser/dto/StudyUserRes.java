@@ -13,7 +13,7 @@ public record StudyUserRes (
 ){
     public static StudyUserRes fromEntity(StudyUser studyUser) {
         return new StudyUserRes(
-                studyUser.getId(),
+                studyUser.getUser().getId(),
                 studyUser.getUser().getUsername(),
                 studyUser.getRole(),
                 studyUser.getJoinedAt()
