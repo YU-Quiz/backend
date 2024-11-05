@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import yuquiz.domain.chatRoom.api.ChatApi;
 import yuquiz.domain.chatRoom.service.ChatMessageService;
 
 import java.time.LocalDate;
@@ -15,11 +16,12 @@ import java.time.LocalDate;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/chat")
-public class ChatController {
+public class ChatController implements ChatApi {
 
     private final ChatMessageService chatMessageService;
 
     /* 일간 채팅 메시지 불러오기 */
+    @Override
     @GetMapping("/{roomId}/messages/daily")
     public ResponseEntity<?> getDailyMessage(@PathVariable Long roomId) {
 
@@ -27,6 +29,7 @@ public class ChatController {
     }
 
     /* 날짜별로 메시지 불렁오기 */
+    @Override
     @GetMapping("/{roomId}/messages")
     public ResponseEntity<?> getDateMessage(@PathVariable Long roomId,
                                             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
