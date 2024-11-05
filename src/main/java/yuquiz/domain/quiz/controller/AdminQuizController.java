@@ -19,8 +19,8 @@ public class AdminQuizController implements AdminQuizApi {
     private final AdminQuizService adminQuizService;
 
     @GetMapping
-    public ResponseEntity<?> getAllQuizzes(@RequestParam QuizSortType sort,
-                                           @RequestParam @Min(0) Integer page) {
+    public ResponseEntity<?> getAllQuizzes(@RequestParam(value = "sort", defaultValue = "DATE_DESC") QuizSortType sort,
+                                           @RequestParam(value = "page", defaultValue = "0") @Min(0) Integer page) {
 
         Page<AdminQuizSummaryRes> quizzes = adminQuizService.getAllQuizzes(sort, page);
 
