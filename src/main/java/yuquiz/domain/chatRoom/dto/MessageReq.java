@@ -7,4 +7,7 @@ public record MessageReq(
         String createdAt,
         MessageType type
 ) {
+    public MessageReq of(String createdAt) {
+        return new MessageReq(roomId, sender, content, createdAt, type);
+    }
 }
