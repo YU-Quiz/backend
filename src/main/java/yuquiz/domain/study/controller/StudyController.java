@@ -96,4 +96,11 @@ public class StudyController implements StudyApi {
 
         return ResponseEntity.status(HttpStatus.OK).body(SuccessRes.from("성공적으로 승인되었습니다."));
     }
+
+    @GetMapping("/{studyId}/member")
+    public ResponseEntity<?> getMembers(@PathVariable(value = "studyId") Long studyId,
+                                        @AuthenticationPrincipal SecurityUserDetails userDetails) {
+
+        return ResponseEntity.status(HttpStatus.OK).body(studyService.getMembers(studyId, userDetails.getId()));
+    }
 }

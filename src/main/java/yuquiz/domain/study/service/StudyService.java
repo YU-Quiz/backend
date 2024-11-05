@@ -18,6 +18,7 @@ import yuquiz.domain.study.dto.StudySummaryRes;
 import yuquiz.domain.study.entity.Study;
 import yuquiz.domain.study.exception.StudyExceptionCode;
 import yuquiz.domain.study.repository.StudyRepository;
+import yuquiz.domain.studyUser.dto.StudyUserRes;
 import yuquiz.domain.studyUser.entity.StudyRole;
 import yuquiz.domain.studyUser.entity.StudyUser;
 import yuquiz.domain.studyUser.entity.UserState;
@@ -143,6 +144,17 @@ public class StudyService {
                 .orElseThrow(() -> new CustomException(ChatRoomExceptionCode.INVALID_ID));
 
         studyUser.accept(chatRoom);
+    }
+
+    @Transactional(readOnly = true)
+    public List<StudyUserRes> getMembers(Long studyId, Long userId) {
+        if (!studyUserRepository.existsByStudy_IdAndUser_Id(studyId, userId)) {
+            throw new CustomException(StudyExceptionCode.UNAUTHORIZED_ACTION);
+        }
+
+        List<StudyUser> studyUsers = studyUserRepository.findByStudyIdAndState(studyId, UserState.REGISTERED);
+
+        return studyUsers.stream().map(StudyUserRes::fromEntity).toList();
     }
 
     private boolean validateLeader(Long studyId, Long userId) {
