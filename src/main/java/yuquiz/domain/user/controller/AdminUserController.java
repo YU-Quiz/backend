@@ -22,8 +22,8 @@ public class AdminUserController implements AdminUserApi {
 
     @Override
     @GetMapping
-    public ResponseEntity<?> getAllUsers(@RequestParam UserSortType sort,
-                                         @RequestParam @Min(0) Integer page) {
+    public ResponseEntity<?> getAllUsers(@RequestParam(value = "sort", defaultValue = "NICK_ASC") UserSortType sort,
+                                         @RequestParam(value = "page", defaultValue = "0") @Min(0) Integer page) {
 
         Page<UserSummaryRes> users = adminUserService.getAllUsers(sort, page);
 
@@ -41,7 +41,7 @@ public class AdminUserController implements AdminUserApi {
     @Override
     @PatchMapping("/{userId}")
     public ResponseEntity<?> suspendUser(@PathVariable Long userId,
-                                         @RequestParam UserStatusReq status){
+                                         @RequestParam UserStatusReq status) {
 
         adminUserService.updateSuspendStatus(userId, status);
 

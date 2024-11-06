@@ -19,8 +19,8 @@ public class AdminPostController implements AdminPostApi {
     private final AdminPostService adminPostService;
 
     @GetMapping
-    public ResponseEntity<?> getAllPosts(@RequestParam PostSortType sort,
-                                                  @RequestParam @Min(0) Integer page) {
+    public ResponseEntity<?> getAllPosts(@RequestParam(value = "sort", defaultValue = "DATE_DESC") PostSortType sort,
+                                         @RequestParam(value = "page", defaultValue = "0") @Min(0) Integer page) {
 
         Page<PostSummaryRes> posts = adminPostService.getAllPosts(sort, page);
 
