@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 public record StudyUserRes (
         Long userId,
-        String username,
+        String nickname,
         StudyRole role,
         LocalDateTime joinedAt
 ){
