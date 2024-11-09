@@ -96,4 +96,21 @@ public class StudyController implements StudyApi {
 
         return ResponseEntity.status(HttpStatus.OK).body(SuccessRes.from("성공적으로 승인되었습니다."));
     }
+
+    @GetMapping("/{studyId}/member")
+    public ResponseEntity<?> getMembers(@PathVariable(value = "studyId") Long studyId,
+                                        @AuthenticationPrincipal SecurityUserDetails userDetails) {
+
+        return ResponseEntity.status(HttpStatus.OK).body(studyService.getMembers(studyId, userDetails.getId()));
+    }
+
+    @DeleteMapping("/{studyId}/member")
+    public ResponseEntity<?> deleteMember(@PathVariable(value = "studyId") Long studyId,
+                                          @RequestParam(value = "id") Long deleteUserId,
+                                          @AuthenticationPrincipal SecurityUserDetails userDetails) {
+
+        studyService.deleteUser(studyId, userDetails.getId(), deleteUserId);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 }
