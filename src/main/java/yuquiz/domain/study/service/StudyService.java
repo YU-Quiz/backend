@@ -9,6 +9,9 @@ import yuquiz.common.exception.CustomException;
 import yuquiz.domain.chatRoom.entity.ChatRoom;
 import yuquiz.domain.chatRoom.exception.ChatRoomExceptionCode;
 import yuquiz.domain.chatRoom.repository.ChatRoomRepository;
+import yuquiz.domain.series.dto.SeriesSortType;
+import yuquiz.domain.series.dto.SeriesSummaryRes;
+import yuquiz.domain.series.service.SeriesService;
 import yuquiz.domain.study.dto.StudyFilter;
 import yuquiz.domain.study.dto.StudyReq;
 import yuquiz.domain.study.dto.StudyRequestRes;
@@ -36,6 +39,7 @@ public class StudyService {
     private final StudyUserRepository studyUserRepository;
     private final UserRepository userRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final SeriesService seriesService;
 
     @Transactional
     public void createStudy(StudyReq studyReq, Long userId) {
@@ -164,6 +168,15 @@ public class StudyService {
         }
 
         studyUserRepository.deleteByStudy_IdAndUser_Id(studyId, deleteId);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<SeriesSummaryRes> getStudySeries(String keyword, Long studyId, Long userId, SeriesSortType sort, Integer page) {
+        if (!studyUserRepository.existsByStudy_IdAndUser_Id(studyId, userId)) {
+            throw new CustomException(StudyExceptionCode.UNAUTHORIZED_ACTION);
+        }
+
+        return seriesService.getStudySeriesSummary(keyword, studyId, sort, page);
     }
 
     private boolean validateLeader(Long studyId, Long userId) {

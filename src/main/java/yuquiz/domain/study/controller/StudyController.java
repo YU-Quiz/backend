@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import yuquiz.common.api.SuccessRes;
+import yuquiz.domain.series.dto.SeriesSortType;
 import yuquiz.domain.study.api.StudyApi;
 import yuquiz.domain.study.dto.StudyFilter;
 import yuquiz.domain.study.dto.StudyReq;
@@ -112,5 +113,15 @@ public class StudyController implements StudyApi {
         studyService.deleteUser(studyId, userDetails.getId(), deleteUserId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @GetMapping("/{studyId}/series")
+    public ResponseEntity<?> getStudySeries(@PathVariable(value = "studyId") Long studyId,
+                                            @RequestParam(value = "sort", defaultValue = "DATE_DESC") SeriesSortType sort,
+                                            @RequestParam(value = "page", defaultValue = "0") Integer page,
+                                            @RequestParam(value = "keyword", defaultValue = "") String keyword,
+                                            @AuthenticationPrincipal SecurityUserDetails userDetails) {
+
+        return ResponseEntity.status(HttpStatus.OK).body(studyService.getStudySeries(keyword, studyId, userDetails.getId(), sort, page));
     }
 }

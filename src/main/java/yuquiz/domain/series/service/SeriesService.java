@@ -110,6 +110,16 @@ public class SeriesService {
         return series.map(SeriesSummaryRes::fromEntity);
     }
 
+    @Transactional(readOnly = true)
+    public Page<SeriesSummaryRes> getStudySeriesSummary(String keyword, Long studyId, SeriesSortType sort, Integer page) {
+
+        Pageable pageable = PageRequest.of(page, SERIES_PER_PAGE, sort.getSort());
+
+        Page<Series> studySeries = seriesRepository.findByStudyAndKeywordAndStudyIsNull(keyword, studyId, pageable);
+
+        return studySeries.map(SeriesSummaryRes::fromEntity);
+    }
+
     private boolean validateCreator(Long seriesId, Long userId) {
         return seriesRepository.findCreatorIdById(seriesId)
                 .map(creatorId -> creatorId.equals(userId))
