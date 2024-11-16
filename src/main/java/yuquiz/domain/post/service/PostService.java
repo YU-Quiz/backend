@@ -35,7 +35,7 @@ public class PostService {
     private final Integer POST_PER_PAGE = 20;
 
     @Transactional
-    public void createPost(PostReq postReq, Long userId) {
+    public Post createPost(PostReq postReq, Long userId) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(UserExceptionCode.INVALID_USERID));
@@ -44,7 +44,7 @@ public class PostService {
                 .orElseThrow(() -> new CustomException(CategoryExceptionCode.INVALID_ID));
 
         Post post = postReq.toEntity(user, category);
-        postRepository.save(post);
+        return postRepository.save(post);
     }
 
     @Transactional

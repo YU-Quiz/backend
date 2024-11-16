@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import yuquiz.common.api.SuccessRes;
+import yuquiz.domain.post.dto.PostReq;
 import yuquiz.domain.series.dto.SeriesSortType;
 import yuquiz.domain.study.api.StudyApi;
 import yuquiz.domain.study.dto.StudyFilter;
@@ -123,5 +124,15 @@ public class StudyController implements StudyApi {
                                             @AuthenticationPrincipal SecurityUserDetails userDetails) {
 
         return ResponseEntity.status(HttpStatus.OK).body(studyService.getStudySeries(keyword, studyId, userDetails.getId(), sort, page));
+    }
+
+    @PostMapping("/{studyId}/notice")
+    public ResponseEntity<?> createStudyNotice(@PathVariable(value = "studyId") Long studyId,
+                                               @RequestBody PostReq postReq,
+                                               @AuthenticationPrincipal SecurityUserDetails userDetails) {
+
+        studyService.createStudyNotice(postReq, userDetails.getId(), studyId);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(SuccessRes.from("성공적으로 생성되었습니다."));
     }
 }

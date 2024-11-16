@@ -9,6 +9,9 @@ import yuquiz.common.exception.CustomException;
 import yuquiz.domain.chatRoom.entity.ChatRoom;
 import yuquiz.domain.chatRoom.exception.ChatRoomExceptionCode;
 import yuquiz.domain.chatRoom.repository.ChatRoomRepository;
+import yuquiz.domain.post.dto.PostReq;
+import yuquiz.domain.post.entity.Post;
+import yuquiz.domain.post.service.PostService;
 import yuquiz.domain.series.dto.SeriesSortType;
 import yuquiz.domain.series.dto.SeriesSummaryRes;
 import yuquiz.domain.series.service.SeriesService;
@@ -21,6 +24,9 @@ import yuquiz.domain.study.dto.StudySummaryRes;
 import yuquiz.domain.study.entity.Study;
 import yuquiz.domain.study.exception.StudyExceptionCode;
 import yuquiz.domain.study.repository.StudyRepository;
+import yuquiz.domain.studyPost.entity.StudyPost;
+import yuquiz.domain.studyPost.entity.StudyPostType;
+import yuquiz.domain.studyPost.repository.StudyPostRepository;
 import yuquiz.domain.studyUser.dto.StudyUserRes;
 import yuquiz.domain.studyUser.entity.StudyRole;
 import yuquiz.domain.studyUser.entity.StudyUser;
@@ -40,6 +46,8 @@ public class StudyService {
     private final UserRepository userRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final SeriesService seriesService;
+    private final PostService postService;
+    private final StudyPostRepository studyPostRepository;
 
     @Transactional
     public void createStudy(StudyReq studyReq, Long userId) {
@@ -177,6 +185,26 @@ public class StudyService {
         }
 
         return seriesService.getStudySeriesSummary(keyword, studyId, sort, page);
+    }
+
+    @Transactional
+    public void createStudyNotice(PostReq postReq, Long userId, Long studyId) {
+        if (!validateLeader(studyId, userId)) {
+            throw new CustomException(StudyExceptionCode.UNAUTHORIZED_ACTION);
+        }
+
+        Study study = studyRepository.findById(studyId)
+                .orElseThrow(() -> new CustomException(StudyExceptionCode.INVALID_ID));
+
+        Post post = postService.createPost(postReq, userId);
+
+        StudyPost studyPost = StudyPost.builder()
+                .study(study)
+                .post(post)
+                .type(StudyPostType.NOTICE)
+                .build();
+
+        studyPostRepository.save(studyPost);
     }
 
     private boolean validateLeader(Long studyId, Long userId) {
