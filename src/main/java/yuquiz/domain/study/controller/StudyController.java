@@ -131,7 +131,17 @@ public class StudyController implements StudyApi {
                                                @RequestBody PostReq postReq,
                                                @AuthenticationPrincipal SecurityUserDetails userDetails) {
 
-        studyService.createStudyNotice(postReq, userDetails.getId(), studyId);
+        studyService.createStudyPost(postReq, userDetails.getId(), studyId, true);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(SuccessRes.from("성공적으로 생성되었습니다."));
+    }
+
+    @PostMapping("/{studyId}/post")
+    public ResponseEntity<?> createStudyPost(@PathVariable(value = "studyId") Long studyId,
+                                               @RequestBody PostReq postReq,
+                                               @AuthenticationPrincipal SecurityUserDetails userDetails) {
+
+        studyService.createStudyPost(postReq, userDetails.getId(), studyId, false);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(SuccessRes.from("성공적으로 생성되었습니다."));
     }

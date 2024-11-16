@@ -188,9 +188,15 @@ public class StudyService {
     }
 
     @Transactional
-    public void createStudyNotice(PostReq postReq, Long userId, Long studyId) {
-        if (!validateLeader(studyId, userId)) {
-            throw new CustomException(StudyExceptionCode.UNAUTHORIZED_ACTION);
+    public void createStudyPost(PostReq postReq, Long userId, Long studyId, boolean isNotice) {
+        if (isNotice) {
+            if (!validateLeader(studyId, userId)) {
+                throw new CustomException(StudyExceptionCode.UNAUTHORIZED_ACTION);
+            }
+        } else {
+            if (!studyUserRepository.existsByStudy_IdAndUser_Id(studyId, userId)) {
+                throw new CustomException(StudyExceptionCode.UNAUTHORIZED_ACTION);
+            }
         }
 
         Study study = studyRepository.findById(studyId)
@@ -201,7 +207,7 @@ public class StudyService {
         StudyPost studyPost = StudyPost.builder()
                 .study(study)
                 .post(post)
-                .type(StudyPostType.NOTICE)
+                .type(isNotice ? StudyPostType.NOTICE : StudyPostType.NORMAL)
                 .build();
 
         studyPostRepository.save(studyPost);
