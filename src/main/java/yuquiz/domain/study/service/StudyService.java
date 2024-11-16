@@ -160,7 +160,7 @@ public class StudyService {
 
     @Transactional(readOnly = true)
     public List<StudyUserRes> getMembers(Long studyId, Long userId) {
-        if (!studyUserRepository.existsByStudy_IdAndUser_Id(studyId, userId)) {
+        if (!studyUserRepository.existsByStudy_IdAndUser_IdAndState(studyId, userId, UserState.REGISTERED)) {
             throw new CustomException(StudyExceptionCode.UNAUTHORIZED_ACTION);
         }
 
@@ -180,7 +180,7 @@ public class StudyService {
 
     @Transactional(readOnly = true)
     public Page<SeriesSummaryRes> getStudySeries(String keyword, Long studyId, Long userId, SeriesSortType sort, Integer page) {
-        if (!studyUserRepository.existsByStudy_IdAndUser_Id(studyId, userId)) {
+        if (!studyUserRepository.existsByStudy_IdAndUser_IdAndState(studyId, userId, UserState.REGISTERED)) {
             throw new CustomException(StudyExceptionCode.UNAUTHORIZED_ACTION);
         }
 
@@ -194,7 +194,7 @@ public class StudyService {
                 throw new CustomException(StudyExceptionCode.UNAUTHORIZED_ACTION);
             }
         } else {
-            if (!studyUserRepository.existsByStudy_IdAndUser_Id(studyId, userId)) {
+            if (!studyUserRepository.existsByStudy_IdAndUser_IdAndState(studyId, userId, UserState.REGISTERED)) {
                 throw new CustomException(StudyExceptionCode.UNAUTHORIZED_ACTION);
             }
         }
