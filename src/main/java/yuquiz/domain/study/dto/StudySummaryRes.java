@@ -6,6 +6,7 @@ import yuquiz.domain.study.entity.StudyState;
 import java.time.LocalDateTime;
 
 public record StudySummaryRes(
+        Long id,
         String name,
         String leaderName,
         int maxUser,
@@ -15,6 +16,7 @@ public record StudySummaryRes(
 ) {
     public static StudySummaryRes fromEntity(Study study) {
         return new StudySummaryRes(
+                study.getId(),
                 study.getStudyName(),
                 study.getLeader().getNickname(),
                 study.getMaxUser(),

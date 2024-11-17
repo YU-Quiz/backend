@@ -50,6 +50,7 @@ public class StudyService {
                 .user(user)
                 .chatRoom(chatRoom)
                 .role(StudyRole.LEADER)
+                .state(UserState.REGISTERED)
                 .build();
 
         studyRepository.save(study);
