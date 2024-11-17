@@ -128,7 +128,7 @@ public class StudyController implements StudyApi {
 
     @PostMapping("/{studyId}/notice")
     public ResponseEntity<?> createStudyNotice(@PathVariable(value = "studyId") Long studyId,
-                                               @RequestBody PostReq postReq,
+                                               @Valid @RequestBody PostReq postReq,
                                                @AuthenticationPrincipal SecurityUserDetails userDetails) {
 
         studyService.createStudyPost(postReq, userDetails.getId(), studyId, true);
@@ -138,8 +138,8 @@ public class StudyController implements StudyApi {
 
     @PostMapping("/{studyId}/post")
     public ResponseEntity<?> createStudyPost(@PathVariable(value = "studyId") Long studyId,
-                                               @RequestBody PostReq postReq,
-                                               @AuthenticationPrincipal SecurityUserDetails userDetails) {
+                                             @Valid @RequestBody PostReq postReq,
+                                             @AuthenticationPrincipal SecurityUserDetails userDetails) {
 
         studyService.createStudyPost(postReq, userDetails.getId(), studyId, false);
 
