@@ -159,6 +159,10 @@ public class StudyService {
         Study study = studyRepository.findById(studyId)
                 .orElseThrow(() -> new CustomException(StudyExceptionCode.INVALID_ID));
 
+        if (study.getMaxUser() <= study.getCurrentUser()) {
+            throw new CustomException(StudyExceptionCode.STUDY_FULL);
+        }
+
         study.increaseUser();
 
         studyUser.accept(chatRoom);
