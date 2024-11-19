@@ -1,6 +1,7 @@
 package yuquiz.domain.study.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,6 +12,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import yuquiz.common.api.SuccessRes;
 import yuquiz.domain.post.dto.PostReq;
+import yuquiz.domain.post.dto.PostSortType;
+import yuquiz.domain.post.dto.PostSummaryRes;
 import yuquiz.domain.series.dto.SeriesSortType;
 import yuquiz.domain.study.api.StudyApi;
 import yuquiz.domain.study.dto.StudyFilter;
@@ -144,5 +147,17 @@ public class StudyController implements StudyApi {
         studyService.createStudyPost(postReq, userDetails.getId(), studyId, false);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(SuccessRes.from("성공적으로 생성되었습니다."));
+    }
+
+    @GetMapping("/{studyId}/post")
+    public ResponseEntity<?> getStudyPosts(@PathVariable(value = "studyId") Long studyId,
+                                           @RequestParam(value = "keyword", required = false) String keyword,
+                                           @RequestParam(value = "sort", defaultValue = "DATE_DESC") PostSortType sort,
+                                           @RequestParam(value = "page", defaultValue = "0") @Min(0) Integer page,
+                                           @AuthenticationPrincipal SecurityUserDetails userDetails) {
+
+        Page<PostSummaryRes> posts = studyService.getStudyPosts(studyId, userDetails.getId(), keyword, sort, page);
+
+        return ResponseEntity.status(HttpStatus.OK).body(posts);
     }
 }
