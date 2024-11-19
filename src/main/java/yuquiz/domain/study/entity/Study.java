@@ -59,7 +59,7 @@ public class Study extends BaseTimeEntity {
     private Integer currentUser;
 
     @Builder
-    public Study(String studyName, String description, ChatRoom chatRoom,Integer maxUser, LocalDateTime registerDuration, User leader) {
+    public Study(String studyName, String description, ChatRoom chatRoom, Integer maxUser, LocalDateTime registerDuration, User leader) {
         this.studyName = studyName;
         this.description = description;
         this.chatRoom = chatRoom;
@@ -76,5 +76,13 @@ public class Study extends BaseTimeEntity {
         this.maxUser = studyReq.maxUser();
         this.registerDuration = studyReq.registerDuration();
         this.state = studyReq.state();
+    }
+
+    public void increaseUser() {
+        this.currentUser += 1;
+    }
+
+    public void decreaseUser() {
+        this.currentUser -= 1;
     }
 }

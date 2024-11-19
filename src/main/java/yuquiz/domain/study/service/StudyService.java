@@ -156,6 +156,11 @@ public class StudyService {
         ChatRoom chatRoom = chatRoomRepository.findByStudy_Id(studyId)
                 .orElseThrow(() -> new CustomException(ChatRoomExceptionCode.INVALID_ID));
 
+        Study study = studyRepository.findById(studyId)
+                .orElseThrow(() -> new CustomException(StudyExceptionCode.INVALID_ID));
+
+        study.increaseUser();
+
         studyUser.accept(chatRoom);
     }
 
@@ -175,6 +180,11 @@ public class StudyService {
         if (!validateLeader(studyId, userId)) {
             throw new CustomException(StudyExceptionCode.UNAUTHORIZED_ACTION);
         }
+
+        Study study = studyRepository.findById(studyId)
+                .orElseThrow(() -> new CustomException(StudyExceptionCode.INVALID_ID));
+
+        study.decreaseUser();
 
         studyUserRepository.deleteByStudy_IdAndUser_Id(studyId, deleteId);
     }
