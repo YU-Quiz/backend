@@ -224,14 +224,14 @@ public class StudyService {
     }
 
     @Transactional(readOnly = true)
-    public Page<PostSummaryRes> getStudyPosts(Long studyId, Long userId, String keyword, PostSortType sort, Integer page) {
+    public Page<PostSummaryRes> getStudyPosts(Long studyId, Long userId, StudyPostType type, String keyword, PostSortType sort, Integer page) {
         if (!studyUserRepository.existsByStudy_IdAndUser_IdAndState(studyId, userId, UserState.REGISTERED)) {
             throw new CustomException(StudyExceptionCode.UNAUTHORIZED_ACTION);
         }
 
         Pageable pageable = PageRequest.of(page, POST_PER_PAGE);
 
-        Page<Post> posts = postRepository.getPostsByStudy(studyId, StudyPostType.NORMAL, keyword,3L, pageable, sort);
+        Page<Post> posts = postRepository.getPostsByStudy(studyId, type, keyword,3L, pageable, sort);
 
         return posts.map(PostSummaryRes::fromEntity);
     }

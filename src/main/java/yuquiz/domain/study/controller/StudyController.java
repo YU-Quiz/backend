@@ -21,6 +21,7 @@ import yuquiz.domain.study.dto.StudyReq;
 import yuquiz.domain.study.dto.StudySortType;
 import yuquiz.domain.study.dto.StudySummaryRes;
 import yuquiz.domain.study.service.StudyService;
+import yuquiz.domain.studyPost.entity.StudyPostType;
 import yuquiz.security.auth.SecurityUserDetails;
 
 @RestController
@@ -149,6 +150,18 @@ public class StudyController implements StudyApi {
         return ResponseEntity.status(HttpStatus.CREATED).body(SuccessRes.from("성공적으로 생성되었습니다."));
     }
 
+    @GetMapping("/{studyId}/notice")
+    public ResponseEntity<?> getStudyNotices(@PathVariable(value = "studyId") Long studyId,
+                                           @RequestParam(value = "keyword", required = false) String keyword,
+                                           @RequestParam(value = "sort", defaultValue = "DATE_DESC") PostSortType sort,
+                                           @RequestParam(value = "page", defaultValue = "0") @Min(0) Integer page,
+                                           @AuthenticationPrincipal SecurityUserDetails userDetails) {
+
+        Page<PostSummaryRes> posts = studyService.getStudyPosts(studyId, userDetails.getId(), StudyPostType.NOTICE, keyword, sort, page);
+
+        return ResponseEntity.status(HttpStatus.OK).body(posts);
+    }
+
     @GetMapping("/{studyId}/post")
     public ResponseEntity<?> getStudyPosts(@PathVariable(value = "studyId") Long studyId,
                                            @RequestParam(value = "keyword", required = false) String keyword,
@@ -156,7 +169,7 @@ public class StudyController implements StudyApi {
                                            @RequestParam(value = "page", defaultValue = "0") @Min(0) Integer page,
                                            @AuthenticationPrincipal SecurityUserDetails userDetails) {
 
-        Page<PostSummaryRes> posts = studyService.getStudyPosts(studyId, userDetails.getId(), keyword, sort, page);
+        Page<PostSummaryRes> posts = studyService.getStudyPosts(studyId, userDetails.getId(), StudyPostType.NORMAL, keyword, sort, page);
 
         return ResponseEntity.status(HttpStatus.OK).body(posts);
     }
