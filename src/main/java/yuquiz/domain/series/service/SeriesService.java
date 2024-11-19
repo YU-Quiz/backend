@@ -35,7 +35,7 @@ public class SeriesService {
 
     private final Integer SERIES_PER_PAGE = 20;
 
-    @Transactional(readOnly = true)
+    @Transactional
     public void createSeries(SeriesReq seriesReq, Long userId) {
 
         User user = userRepository.findById(userId)
