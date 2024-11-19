@@ -16,10 +16,10 @@ import java.util.List;
 import static yuquiz.domain.post.entity.QPost.post;
 import static yuquiz.domain.studyPost.entity.QStudyPost.studyPost;
 
-public class CustomPostRepositoryImpl implements CustomPostRepository{
+public class CustomPostRepositoryImpl implements CustomPostRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
-    public CustomPostRepositoryImpl(EntityManager entityManager){
+    public CustomPostRepositoryImpl(EntityManager entityManager) {
         this.jpaQueryFactory = new JPAQueryFactory(entityManager);
     }
 
@@ -28,7 +28,11 @@ public class CustomPostRepositoryImpl implements CustomPostRepository{
         List<Post> posts = jpaQueryFactory
                 .select(post)
                 .from(post)
-                .where(wordContain(keyword), categoryEqual(categoryId))
+                .where(
+                        wordContain(keyword),
+                        categoryEqual(categoryId),
+                        post.studyPosts.isEmpty()
+                )
                 .orderBy(sort.getOrder())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -37,7 +41,11 @@ public class CustomPostRepositoryImpl implements CustomPostRepository{
         long total = jpaQueryFactory
                 .select(post.count())
                 .from(post)
-                .where(wordContain(keyword), categoryEqual(categoryId))
+                .where(
+                        wordContain(keyword),
+                        categoryEqual(categoryId),
+                        post.studyPosts.isEmpty()
+                )
                 .fetchOne();
 
         return new PageImpl<>(posts, pageable, total);
