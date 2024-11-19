@@ -63,9 +63,9 @@ public class ChatMessageServiceTest {
         messages = new ArrayList<>();
 
         message1 =
-                new Message("1", "테스터1", "내용1", "2024-11-05 12:00:00", MessageType.TALK);
+                new Message("1", "테스터1", 1L, "내용1", "2024-11-05 12:00:00", MessageType.TALK);
         message2 =
-                new Message("1", "테스터2", "내용2", "2024-11-05 12:00:00", MessageType.TALK);
+                new Message("1", "테스터2", 2L, "내용2", "2024-11-05 12:00:00", MessageType.TALK);
 
 
         messages.add(message1);
@@ -134,7 +134,7 @@ public class ChatMessageServiceTest {
         String key = MESSAGE_PREFIX + roomId;
 
         // when
-        chatMessageService.saveMessageInRedis(roomId, message1);
+        chatMessageService.saveMessageInRedis(message1.userId(), roomId, message1);
 
         // then
         verify(redisUtil).setList(eq(key), any(Message.class));

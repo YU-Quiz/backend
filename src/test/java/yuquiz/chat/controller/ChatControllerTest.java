@@ -52,9 +52,9 @@ public class ChatControllerTest {
         messages = new ArrayList<>();
 
         Message message1 =
-                new Message("1", "테스터1", "내용1", "2024-11-05 12:00:00", MessageType.TALK);
+                new Message("1", "테스터1", 1L, "내용1", "2024-11-05 12:00:00", MessageType.TALK);
         Message message2 =
-                new Message("1", "테스터2", "내용2", "2024-11-05 12:00:00", MessageType.TALK);
+                new Message("1", "테스터2", 2L, "내용2", "2024-11-05 12:00:00", MessageType.TALK);
 
 
         messages.add(message1);
@@ -92,8 +92,8 @@ public class ChatControllerTest {
         LocalDate date = LocalDate.of(2024, 11, 5); // 테스트할 날짜를 설정합니다.
 
         List<Message> messages = List.of(
-                new Message("1", "테스터1", "내용1", "2024-11-05 12:00:00", MessageType.TALK),
-                new Message("1", "테스터2", "내용2", "2024-11-05 12:00:00", MessageType.TALK)
+                new Message("1", "테스터1", 1L, "내용1", "2024-11-05 12:00:00", MessageType.TALK),
+                new Message("1", "테스터2", 2L, "내용2", "2024-11-05 12:00:00", MessageType.TALK)
         );
 
         given(chatMessageService.fetchMessagesByDateAndRoomId(roomId, date)).willReturn(messages);

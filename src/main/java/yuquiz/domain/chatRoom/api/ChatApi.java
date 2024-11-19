@@ -25,6 +25,7 @@ public interface ChatApi {
                                         {
                                             "roomId": "1",
                                             "sender": "테스터1",
+                                            "userId": 1,
                                             "content": "내용1",
                                             "createdAt": "2024-11-05T10:15:30",
                                             "type": "TALK"
@@ -32,6 +33,7 @@ public interface ChatApi {
                                         {
                                             "roomId": "1",
                                             "sender": "테스터2",
+                                            "userId": 2,
                                             "content": "내용2",
                                             "createdAt": "2024-11-05T10:15:30",
                                             "type": "TALK"
@@ -52,6 +54,7 @@ public interface ChatApi {
                                         {
                                             "roomId": "1",
                                             "sender": "테스터1",
+                                            "userId": 1,
                                             "content": "내용1",
                                             "createdAt": "2024-11-05T10:15:30",
                                             "type": "TALK"
@@ -59,6 +62,7 @@ public interface ChatApi {
                                         {
                                             "roomId": "1",
                                             "sender": "테스터2",
+                                            "userId": 2,
                                             "content": "내용2",
                                             "createdAt": "2024-11-05T10:15:30",
                                             "type": "TALK"

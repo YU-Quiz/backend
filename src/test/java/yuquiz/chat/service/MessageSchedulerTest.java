@@ -32,8 +32,8 @@ public class MessageSchedulerTest {
     public void testRunDailyMessageProcessJobTest() {
 
         Map<Long, List<Message>> testMessages = new HashMap<>();
-        testMessages.put(1L, List.of(new Message("1", "테스터1", "내용1", "2024-11-05 12:00:00", MessageType.TALK)));
-        testMessages.put(2L, List.of(new Message("1", "테스터2", "내용2", "2024-11-05 12:00:00", MessageType.TALK)));
+        testMessages.put(1L, List.of(new Message("1", "테스터1", 1L, "내용1", "2024-11-05 12:00:00", MessageType.TALK)));
+        testMessages.put(2L, List.of(new Message("1", "테스터2", 2L, "내용2", "2024-11-05 12:00:00", MessageType.TALK)));
 
         when(chatMessageService.getAllMessagesGroupedByRoomId()).thenReturn(testMessages);
 
