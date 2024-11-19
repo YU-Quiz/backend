@@ -10,6 +10,8 @@ import yuquiz.common.entity.BaseTimeEntity;
 import yuquiz.domain.category.entity.Category;
 import yuquiz.domain.comment.entity.Comment;
 import yuquiz.domain.post.dto.PostReq;
+import yuquiz.domain.studyPost.entity.StudyPost;
+import yuquiz.domain.studyUser.entity.StudyUser;
 import yuquiz.domain.user.entity.User;
 
 import java.util.ArrayList;
@@ -38,6 +40,9 @@ public class Post extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    private List<StudyPost> studyPosts = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")

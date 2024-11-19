@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import yuquiz.common.entity.BaseTimeEntity;
 import yuquiz.domain.chatRoom.entity.ChatRoom;
 import yuquiz.domain.study.dto.StudyReq;
+import yuquiz.domain.studyPost.entity.StudyPost;
 import yuquiz.domain.studyUser.entity.StudyUser;
 import yuquiz.domain.user.entity.User;
 
@@ -36,6 +37,9 @@ public class Study extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "study", cascade = CascadeType.REMOVE)
     private List<StudyUser> studyUsers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "study", cascade = CascadeType.REMOVE)
+    private List<StudyPost> studyPosts = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "leader_id")
