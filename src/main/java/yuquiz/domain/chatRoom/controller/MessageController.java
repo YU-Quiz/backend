@@ -6,6 +6,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.web.bind.annotation.RestController;
 import yuquiz.domain.chatRoom.dto.Message;
 import yuquiz.domain.chatRoom.service.ChatMessageService;
@@ -21,9 +22,11 @@ public class MessageController {
 
     /* 방에 메시지 전송 */
     @MessageMapping("/message/{roomId}")
-    public Message sendMessage(@DestinationVariable Long roomId, Message message) {
+    public Message sendMessage(@DestinationVariable Long roomId, Message message, StompHeaderAccessor accessor) {
 
-        chatMessageService.saveMessageInRedis(roomId, message);
+        Long userId = (Long) accessor.getSessionAttributes().get("userId");
+
+        chatMessageService.saveMessageInRedis(userId, roomId, message);
         redisTemplate.convertAndSend(channelTopic.getTopic(), message);
         return message;
     }

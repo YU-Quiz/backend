@@ -44,9 +44,9 @@ public class ChatMessageService {
     }
 
     /* 메시지 redis에 저장 */
-    public void saveMessageInRedis(Long roomId, Message messageReq) {
+    public void saveMessageInRedis(Long userId, Long roomId, Message messageReq) {
 
-        Message message = messageReq.of(String.valueOf(LocalDateTime.now()));
+        Message message = messageReq.of(String.valueOf(LocalDateTime.now()), userId);
 
         String key = MESSAGE_PREFIX + roomId;
         redisUtil.setList(key, message);
