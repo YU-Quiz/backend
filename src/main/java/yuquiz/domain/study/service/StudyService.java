@@ -189,15 +189,17 @@ public class StudyService {
 
     @Transactional
     public void createStudyPost(PostReq postReq, Long userId, Long studyId, boolean isNotice) {
-        if (isNotice) {
-            if (!validateLeader(studyId, userId)) {
-                throw new CustomException(StudyExceptionCode.UNAUTHORIZED_ACTION);
-            }
-        } else {
-            if (!studyUserRepository.existsByStudy_IdAndUser_IdAndState(studyId, userId, UserState.REGISTERED)) {
-                throw new CustomException(StudyExceptionCode.UNAUTHORIZED_ACTION);
-            }
-        }
+      boolean isAuthorized;
+      
+      if (isNotice) {
+          isAuthorized = validateLeader(studyId, userId);
+      } else {
+          isAuthorized = studyUserRepository.existsByStudy_IdAndUser_IdAndState(studyId, userId, UserState.REGISTERED);
+      }
+      
+      if (!isAuthorized) {
+          throw new CustomException(StudyExceptionCode.UNAUTHORIZED_ACTION);
+      }
 
         Study study = studyRepository.findById(studyId)
                 .orElseThrow(() -> new CustomException(StudyExceptionCode.INVALID_ID));
