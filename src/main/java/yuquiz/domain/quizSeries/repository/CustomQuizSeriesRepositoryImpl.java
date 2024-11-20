@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import yuquiz.domain.quiz.entity.Quiz;
 
 import java.util.List;
+import java.util.Optional;
 
 import static yuquiz.domain.quiz.entity.QQuiz.quiz;
 import static yuquiz.domain.quizSeries.entity.QQuizSeries.quizSeries;
@@ -34,12 +35,13 @@ public class CustomQuizSeriesRepositoryImpl implements CustomQuizSeriesRepositor
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        long total = jpaQueryFactory
+        long total = Optional.ofNullable(jpaQueryFactory
                 .select(quiz.count())
                 .from(quizSeries)
                 .join(quizSeries.quiz, quiz)
                 .where(quizSeries.series.id.eq(seriesId))
-                .fetch().get(0);
+                .fetchOne()
+        ).orElse(0L);
 
         return new PageImpl<>(quizzes, pageable, total);
     }
