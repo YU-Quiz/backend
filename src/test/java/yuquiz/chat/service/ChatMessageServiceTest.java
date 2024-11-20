@@ -134,7 +134,7 @@ public class ChatMessageServiceTest {
         String key = MESSAGE_PREFIX + roomId;
 
         // when
-        chatMessageService.saveMessageInRedis(message1.userId(), roomId, message1);
+        chatMessageService.saveMessageInRedis(roomId, message1);
 
         // then
         verify(redisUtil).setList(eq(key), any(Message.class));
