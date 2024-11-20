@@ -13,7 +13,6 @@ import yuquiz.domain.chatRoom.repository.ChatMessageRepository;
 import yuquiz.domain.chatRoom.repository.ChatRoomRepository;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,9 +43,7 @@ public class ChatMessageService {
     }
 
     /* 메시지 redis에 저장 */
-    public void saveMessageInRedis(Long userId, Long roomId, Message messageReq) {
-
-        Message message = messageReq.of(String.valueOf(LocalDateTime.now()), userId);
+    public void saveMessageInRedis(Long roomId, Message message) {
 
         String key = MESSAGE_PREFIX + roomId;
         redisUtil.setList(key, message);
