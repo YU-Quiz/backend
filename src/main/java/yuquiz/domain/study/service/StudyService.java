@@ -10,12 +10,15 @@ import yuquiz.common.exception.CustomException;
 import yuquiz.domain.chatRoom.entity.ChatRoom;
 import yuquiz.domain.chatRoom.exception.ChatRoomExceptionCode;
 import yuquiz.domain.chatRoom.repository.ChatRoomRepository;
+import yuquiz.domain.notification.dto.NotificationType;
+import yuquiz.domain.notification.service.NotificationService;
 import yuquiz.domain.post.dto.PostReq;
 import yuquiz.domain.post.dto.PostSortType;
 import yuquiz.domain.post.dto.PostSummaryRes;
 import yuquiz.domain.post.entity.Post;
 import yuquiz.domain.post.repository.PostRepository;
 import yuquiz.domain.post.service.PostService;
+import yuquiz.domain.quiz.entity.Quiz;
 import yuquiz.domain.series.dto.SeriesSortType;
 import yuquiz.domain.series.dto.SeriesSummaryRes;
 import yuquiz.domain.series.service.SeriesService;
@@ -53,6 +56,7 @@ public class StudyService {
     private final PostService postService;
     private final StudyPostRepository studyPostRepository;
     private final PostRepository postRepository;
+    private final NotificationService notificationService;
 
     private final Integer POST_PER_PAGE = 20;
 
@@ -138,6 +142,8 @@ public class StudyService {
                 .build();
 
         studyUserRepository.save(studyUser);
+
+        studyNotification(study, study.getLeader(), NotificationType.STUDY_JOIN_REQUEST, "스터디에 새로운 참여 신청이 있습니다.");
     }
 
     @Transactional(readOnly = true)
@@ -173,6 +179,8 @@ public class StudyService {
         study.increaseUser();
 
         studyUser.accept(chatRoom);
+
+        studyNotification(study, studyUser.getUser(), NotificationType.STUDY_JOIN_ACCEPTED, "스터디에 참가 승인되었습니다.");
     }
 
     @Transactional(readOnly = true)
@@ -198,6 +206,12 @@ public class StudyService {
         study.decreaseUser();
 
         studyUserRepository.deleteByStudy_IdAndUser_Id(studyId, deleteId);
+
+        // todo : 사용자 조회 없이 처리할 방법은?
+        User user = userRepository.findById(deleteId)
+                .orElseThrow(() -> new CustomException(UserExceptionCode.INVALID_USERID));
+
+        studyNotification(study, user, NotificationType.STUDY_KICKED, "스터디에서 강제 퇴장 당했습니다.");
     }
 
     @Transactional(readOnly = true)
@@ -254,5 +268,13 @@ public class StudyService {
         return studyRepository.findLeaderById(studyId)
                 .map(leaderId -> leaderId.equals(userId))
                 .orElse(false);
+    }
+
+    public void studyNotification(Study study, User user, NotificationType type, String content) {
+
+        String message = "\"" + study.getStudyName() + "\"" + content;
+        String url = "/api/v1/study/" + study.getId();
+
+        notificationService.send(user, type, message, url);
     }
 }
