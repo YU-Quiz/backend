@@ -20,6 +20,7 @@ public class QuizSeriesController implements QuizSeriesApi {
 
     private final QuizSeriesService quizSeriesService;
 
+    @Override
     @GetMapping("/quizzes/{seriesId}")
     public ResponseEntity<?> getQuizzesBySeriesId(@PathVariable(value = "seriesId") Long seriesId,
                                                   @RequestParam(value = "page", defaultValue = "0") @Min(0) Integer page,
