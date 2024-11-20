@@ -33,6 +33,7 @@ public class QuizSeriesService {
 
     private static final int QUIZ_PER_PAGE = 20;
 
+    @Transactional(readOnly = true)
     public Page<QuizSummaryRes> getQuizzesBySeriesId(Long seriesId, Integer page, long userId) {
         if (!validateMember(seriesId, userId)) {
             throw new CustomException(QuizSeriesExceptionCode.UNAUTHORIZED_ACTION);
