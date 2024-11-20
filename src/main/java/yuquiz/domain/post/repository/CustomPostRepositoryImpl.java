@@ -12,6 +12,7 @@ import yuquiz.domain.post.entity.Post;
 import yuquiz.domain.studyPost.entity.StudyPostType;
 
 import java.util.List;
+import java.util.Optional;
 
 import static yuquiz.domain.post.entity.QPost.post;
 import static yuquiz.domain.studyPost.entity.QStudyPost.studyPost;
@@ -38,7 +39,7 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        long total = jpaQueryFactory
+        long total = Optional.ofNullable(jpaQueryFactory
                 .select(post.count())
                 .from(post)
                 .where(
@@ -46,7 +47,9 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
                         categoryEqual(categoryId),
                         post.studyPosts.isEmpty()
                 )
-                .fetchOne();
+                .fetchOne()
+        ).orElse(0L);
+
 
         return new PageImpl<>(posts, pageable, total);
     }
@@ -68,7 +71,7 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        long total = jpaQueryFactory
+        long total = Optional.ofNullable(jpaQueryFactory
                 .select(post.count())
                 .from(post)
                 .join(post.studyPosts, studyPost)
@@ -78,7 +81,8 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
                         wordContain(keyword),
                         categoryEqual(categoryId)
                 )
-                .fetchOne();
+                .fetchOne()
+        ).orElse(0L);
 
         return new PageImpl<>(posts, pageable, total);
     }
