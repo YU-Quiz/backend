@@ -18,7 +18,6 @@ import yuquiz.domain.post.dto.PostSummaryRes;
 import yuquiz.domain.post.entity.Post;
 import yuquiz.domain.post.repository.PostRepository;
 import yuquiz.domain.post.service.PostService;
-import yuquiz.domain.quiz.entity.Quiz;
 import yuquiz.domain.series.dto.SeriesSortType;
 import yuquiz.domain.series.dto.SeriesSummaryRes;
 import yuquiz.domain.series.service.SeriesService;

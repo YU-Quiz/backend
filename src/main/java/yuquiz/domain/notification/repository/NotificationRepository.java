@@ -9,8 +9,6 @@ import org.springframework.data.repository.query.Param;
 import yuquiz.domain.notification.entity.Notification;
 import yuquiz.domain.user.entity.User;
 
-import java.util.List;
-
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
 
     Page<Notification> findAllByUserAndIsChecked(User user, boolean isChecked, Pageable pageable);
