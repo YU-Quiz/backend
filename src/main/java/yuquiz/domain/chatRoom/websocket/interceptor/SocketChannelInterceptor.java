@@ -95,7 +95,7 @@ public class SocketChannelInterceptor implements ChannelInterceptor {
     }
 
     private Long getUserId(StompHeaderAccessor accessor) {
-        return Long.valueOf(accessor.getFirstNativeHeader("userId"));
+        return (Long) accessor.getSessionAttributes().get("userId");
     }
 
     /* 토큰 유효성 검사 */
