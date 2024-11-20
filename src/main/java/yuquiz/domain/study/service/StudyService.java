@@ -2,6 +2,7 @@ package yuquiz.domain.study.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,7 +11,10 @@ import yuquiz.domain.chatRoom.entity.ChatRoom;
 import yuquiz.domain.chatRoom.exception.ChatRoomExceptionCode;
 import yuquiz.domain.chatRoom.repository.ChatRoomRepository;
 import yuquiz.domain.post.dto.PostReq;
+import yuquiz.domain.post.dto.PostSortType;
+import yuquiz.domain.post.dto.PostSummaryRes;
 import yuquiz.domain.post.entity.Post;
+import yuquiz.domain.post.repository.PostRepository;
 import yuquiz.domain.post.service.PostService;
 import yuquiz.domain.series.dto.SeriesSortType;
 import yuquiz.domain.series.dto.SeriesSummaryRes;
@@ -48,6 +52,9 @@ public class StudyService {
     private final SeriesService seriesService;
     private final PostService postService;
     private final StudyPostRepository studyPostRepository;
+    private final PostRepository postRepository;
+
+    private final Integer POST_PER_PAGE = 20;
 
     @Transactional
     public void createStudy(StudyReq studyReq, Long userId) {
@@ -228,6 +235,19 @@ public class StudyService {
                 .build();
 
         studyPostRepository.save(studyPost);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<PostSummaryRes> getStudyPosts(Long studyId, Long userId, StudyPostType type, String keyword, PostSortType sort, Integer page) {
+        if (!studyUserRepository.existsByStudy_IdAndUser_IdAndState(studyId, userId, UserState.REGISTERED)) {
+            throw new CustomException(StudyExceptionCode.UNAUTHORIZED_ACTION);
+        }
+
+        Pageable pageable = PageRequest.of(page, POST_PER_PAGE);
+
+        Page<Post> posts = postRepository.getPostsByStudy(studyId, type, keyword,3L, pageable, sort);
+
+        return posts.map(PostSummaryRes::fromEntity);
     }
 
     private boolean validateLeader(Long studyId, Long userId) {

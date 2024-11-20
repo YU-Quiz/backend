@@ -11,11 +11,12 @@ import yuquiz.domain.quiz.dto.quiz.QuizSortType;
 import yuquiz.domain.quiz.entity.Quiz;
 
 import java.util.List;
+import java.util.Optional;
 
 import static yuquiz.domain.quiz.entity.QQuiz.quiz;
 
 
-public class CustomQuizRepositoryImpl implements CustomQuizRepository{
+public class CustomQuizRepositoryImpl implements CustomQuizRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     public CustomQuizRepositoryImpl(EntityManager entityManager) {
@@ -33,11 +34,13 @@ public class CustomQuizRepositoryImpl implements CustomQuizRepository{
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        long total = jpaQueryFactory
-                .select(quiz.count())
-                .from(quiz)
-                .where(wordContain(keyword), subjectEqual(subjectId))
-                .fetchOne();
+        long total = Optional.ofNullable(
+                jpaQueryFactory
+                        .select(quiz.count())
+                        .from(quiz)
+                        .where(wordContain(keyword), subjectEqual(subjectId))
+                        .fetchOne()
+        ).orElse(0L);
 
         return new PageImpl<>(quizzes, pageable, total);
     }
