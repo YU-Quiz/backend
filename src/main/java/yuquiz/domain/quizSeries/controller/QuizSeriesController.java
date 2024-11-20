@@ -1,11 +1,14 @@
 package yuquiz.domain.quizSeries.controller;
 
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import yuquiz.common.api.SuccessRes;
+import yuquiz.domain.quiz.dto.quiz.QuizSummaryRes;
 import yuquiz.domain.quizSeries.api.QuizSeriesApi;
 import yuquiz.domain.quizSeries.service.QuizSeriesService;
 import yuquiz.security.auth.SecurityUserDetails;
@@ -18,7 +21,18 @@ public class QuizSeriesController implements QuizSeriesApi {
     private final QuizSeriesService quizSeriesService;
 
     @Override
-    @PostMapping("/{seriesId}/{quizId}")
+    @GetMapping("/{seriesId}/quizzes")
+    public ResponseEntity<?> getQuizzesBySeriesId(@PathVariable(value = "seriesId") Long seriesId,
+                                                  @RequestParam(value = "page", defaultValue = "0") @Min(0) Integer page,
+                                                  @AuthenticationPrincipal SecurityUserDetails userDetails) {
+
+        Page<QuizSummaryRes> quizSeriesRes = quizSeriesService.getQuizzesBySeriesId(seriesId, page, userDetails.getId());
+
+        return ResponseEntity.status(HttpStatus.OK).body(quizSeriesRes);
+    }
+
+    @Override
+    @PostMapping("/quizzes/{seriesId}/{quizId}")
     public ResponseEntity<?> addQuizToSeries(@PathVariable(value = "seriesId") Long seriesId,
                                              @PathVariable(value = "quizId") Long quizId,
                                              @AuthenticationPrincipal SecurityUserDetails userDetails) {
@@ -29,7 +43,7 @@ public class QuizSeriesController implements QuizSeriesApi {
     }
 
     @Override
-    @DeleteMapping("/{seriesId}/{quizId}")
+    @DeleteMapping("/quizzses/{seriesId}/{quizId}")
     public ResponseEntity<?> deleteQuizFromSeries(@PathVariable(value = "seriesId") Long seriesId,
                                                   @PathVariable(value = "quizId") Long quizId,
                                                   @AuthenticationPrincipal SecurityUserDetails userDetails) {

@@ -19,6 +19,9 @@ public interface SeriesRepository extends JpaRepository<Series, Long> {
             "and (:keyword is null or s.name like %:keyword%)")
     Page<Series> findByKeywordAndStudyIsNull(@Param("keyword") String keyword, Pageable pageable);
 
+    @Query("select s.study.id from Series s where s.id = :id")
+    Optional<Long> findStudyIdById(@Param("id") Long id);
+
     @Query("select s from Series s " +
             "where s.study.id = :study " +
             "and (:keyword is null or s.name like %:keyword%)")
