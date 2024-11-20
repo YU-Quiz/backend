@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 import yuquiz.domain.chatRoom.dto.Message;
 import yuquiz.domain.chatRoom.service.ChatMessageService;
 
+import java.time.LocalDateTime;
+
 @RestController
 @RequiredArgsConstructor
 @Slf4j
@@ -25,9 +27,10 @@ public class MessageController {
     public Message sendMessage(@DestinationVariable Long roomId, Message message, StompHeaderAccessor accessor) {
 
         Long userId = (Long) accessor.getSessionAttributes().get("userId");
+        Message customMessage = Message.from(message, String.valueOf(LocalDateTime.now()), userId);
 
-        chatMessageService.saveMessageInRedis(userId, roomId, message);
-        redisTemplate.convertAndSend(channelTopic.getTopic(), message);
+        chatMessageService.saveMessageInRedis(roomId, customMessage);
+        redisTemplate.convertAndSend(channelTopic.getTopic(), customMessage);
         return message;
     }
 

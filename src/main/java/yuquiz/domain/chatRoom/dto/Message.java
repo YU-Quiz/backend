@@ -8,7 +8,14 @@ public record Message(
         String createdAt,
         MessageType type
 ) {
-    public Message of(String createdAt, Long userId) {
-        return new Message(roomId, sender, userId, content, createdAt, type);
+    public static Message from(Message message, String createdAt, Long userId) {
+        return new Message(
+                message.roomId,
+                message.sender,
+                userId,
+                message.content,
+                createdAt,
+                message.type
+        );
     }
 }
