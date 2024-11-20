@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 
 public record StudyRes(
         Long id,
+        Long chatRoomId,
         String Name,
         String description,
         LocalDateTime registerDuration,
@@ -20,6 +21,7 @@ public record StudyRes(
     public static StudyRes fromEntity(Study study, boolean isMember, StudyRole role) {
         return new StudyRes(
                 study.getId(),
+                study.getChatRoom().getId(),
                 study.getStudyName(),
                 study.getDescription(),
                 study.getRegisterDuration(),
