@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import yuquiz.domain.post.dto.PostReq;
+import yuquiz.domain.post.dto.PostSortType;
+import yuquiz.domain.series.dto.SeriesSortType;
 import yuquiz.domain.study.dto.StudyFilter;
 import yuquiz.domain.study.dto.StudyReq;
 import yuquiz.domain.study.dto.StudySortType;
@@ -99,50 +103,44 @@ public interface StudyApi {
                     content = @Content(mediaType = "application/json", examples = {
                             @ExampleObject(value = """
                                     {
-                                        "totalPages": 1,
-                                        "totalElements": 2,
-                                        "first": true,
-                                        "last": true,
-                                        "size": 20,
-                                        "content": [
-                                            {
-                                                "name": "임시 1",
-                                                "leaderName": "테스터111",
-                                                "maxUser": 10,
-                                                "curUser": 1,
-                                                "registerDuration": "2024-10-17T16:50:04",
-                                                "state": null
-                                            },
-                                            {
-                                                "name": "임시",
-                                                "leaderName": "테스터",
-                                                "maxUser": 100,
-                                                "curUser": 1,
-                                                "registerDuration": "2024-10-08T16:50:08",
-                                                "state": null
-                                            }
-                                        ],
-                                        "number": 0,
-                                        "sort": {
-                                            "empty": true,
-                                            "unsorted": true,
-                                            "sorted": false
-                                        },
-                                        "pageable": {
-                                            "pageNumber": 0,
-                                            "pageSize": 20,
-                                            "sort": {
-                                                "empty": true,
-                                                "unsorted": true,
-                                                "sorted": false
-                                            },
-                                            "offset": 0,
-                                            "unpaged": false,
-                                            "paged": true
-                                        },
-                                        "numberOfElements": 2,
-                                        "empty": false
-                                    }
+                                        {
+                                         "totalPages": 1,
+                                         "totalElements": 1,
+                                         "first": true,
+                                         "last": true,
+                                         "size": 20,
+                                         "content": [
+                                             {
+                                                 "id": 17,
+                                                 "name": "내 스터디 어디갔노",
+                                                 "leaderName": "dryice",
+                                                 "maxUser": 10,
+                                                 "curUser": 2,
+                                                 "registerDuration": "2024-11-23T16:08:00",
+                                                 "state": "ACTIVE"
+                                             }
+                                         ],
+                                         "number": 0,
+                                         "sort": {
+                                             "empty": true,
+                                             "unsorted": true,
+                                             "sorted": false
+                                         },
+                                         "pageable": {
+                                             "pageNumber": 0,
+                                             "pageSize": 20,
+                                             "sort": {
+                                                 "empty": true,
+                                                 "unsorted": true,
+                                                 "sorted": false
+                                             },
+                                             "offset": 0,
+                                             "unpaged": false,
+                                             "paged": true
+                                         },
+                                         "numberOfElements": 1,
+                                         "empty": false
+                                     }
                                     """)
                     }))
     })
@@ -287,6 +285,15 @@ public interface StudyApi {
                                         "message": "존재하지 않는 스터디입니다."
                                     }
                                     """)
+                    })),
+            @ApiResponse(responseCode = "409", description = "스터디 최대 인원수 초과",
+                    content = @Content(mediaType = "application/json", examples = {
+                            @ExampleObject(value = """
+                                    {
+                                        "status": 409,
+                                        "message": "스터디의 최대 인원수를 초과하였습니다."
+                                    }
+                                    """)
                     }))
     })
     ResponseEntity<?> acceptRequest(@PathVariable(value = "studyId") Long studyId,
@@ -343,6 +350,84 @@ public interface StudyApi {
                                     }
                                     """)
                     })),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 사용자",
+                    content = @Content(mediaType = "application/json", examples = {
+                            @ExampleObject(value = """
+                                    {
+                                         "status": 404,
+                                         "message": "존재하지 않는 사용자입니다."
+                                     }
+                                    """)
+                    })),
+            @ApiResponse(responseCode = "409", description = "스터디 최대 인원수 초과",
+                    content = @Content(mediaType = "application/json", examples = {
+                            @ExampleObject(value = """
+                                    {
+                                        "status": 409,
+                                        "message": "스터디의 최대 인원수를 초과하였습니다."
+                                    }
+                                    """)
+                    }))
+    })
+    ResponseEntity<?> deleteMember(@PathVariable(value = "studyId") Long studyId,
+                                   @RequestParam(value = "id") Long deleteUserId,
+                                   @AuthenticationPrincipal SecurityUserDetails userDetails);
+
+    @Operation(summary = "스터디 문제집 목록 조회", description = "스터디 문제집 목록 조회 API")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "스터디 문제집 목록 조회 성공",
+                    content = @Content(mediaType = "application/json", examples = {
+                            @ExampleObject(value = """
+                                                {
+                                                    "totalPages": 1,
+                                                    "totalElements": 2,
+                                                    "first": true,
+                                                    "last": true,
+                                                    "size": 20,
+                                                    "content": [
+                                                        {
+                                                            "id": 22,
+                                                            "name": "스터디 문제집2",
+                                                            "creator": "어드민"
+                                                        },
+                                                        {
+                                                            "id": 21,
+                                                            "name": "스터디 문제집1",
+                                                            "creator": "어드민"
+                                                        }
+                                                    ],
+                                                    "number": 0,
+                                                    "sort": {
+                                                        "empty": false,
+                                                        "unsorted": false,
+                                                        "sorted": true
+                                                    },
+                                                    "pageable": {
+                                                        "pageNumber": 0,
+                                                        "pageSize": 20,
+                                                        "sort": {
+                                                            "empty": false,
+                                                            "unsorted": false,
+                                                            "sorted": true
+                                                        },
+                                                        "offset": 0,
+                                                        "unpaged": false,
+                                                        "paged": true
+                                                    },
+                                                    "numberOfElements": 2,
+                                                    "empty": false
+                                                }
+                                    """)
+                    })),
+            @ApiResponse(responseCode = "403", description = "스터디원이 아님",
+                    content = @Content(mediaType = "application/json", examples = {
+                            @ExampleObject(value = """
+                                    {
+                                        "status": 403,
+                                        "message": "권한이 없습니다."
+                                    }
+                                    """)
+                    })),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 스터디",
                     content = @Content(mediaType = "application/json", examples = {
                             @ExampleObject(value = """
@@ -353,7 +438,215 @@ public interface StudyApi {
                                     """)
                     }))
     })
-    ResponseEntity<?> deleteMember(@PathVariable(value = "studyId") Long studyId,
-                                   @RequestParam(value = "id") Long deleteUserId,
-                                   @AuthenticationPrincipal SecurityUserDetails userDetails);
+    ResponseEntity<?> getStudySeries(@PathVariable(value = "studyId") Long studyId,
+                                     @RequestParam(value = "sort", defaultValue = "DATE_DESC") SeriesSortType sort,
+                                     @RequestParam(value = "page", defaultValue = "0") Integer page,
+                                     @RequestParam(value = "keyword", defaultValue = "") String keyword,
+                                     @AuthenticationPrincipal SecurityUserDetails userDetails);
+
+    @Operation(summary = "스터디 공지 작성", description = "스터디 공지 작성 API")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "스터디 공지 작성 성공",
+                    content = @Content(mediaType = "application/json", examples = {
+                            @ExampleObject(value = """
+                                    {
+                                        "response": "성공적으로 생성되었습니다."
+                                    }
+                                    """)
+                    })),
+            @ApiResponse(responseCode = "403", description = "스터디장이 아님",
+                    content = @Content(mediaType = "application/json", examples = {
+                            @ExampleObject(value = """
+                                    {
+                                        "status": 403,
+                                        "message": "권한이 없습니다."
+                                    }
+                                    """)
+                    })),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 스터디",
+                    content = @Content(mediaType = "application/json", examples = {
+                            @ExampleObject(value = """
+                                    {
+                                        "status": 404,
+                                        "message": "존재하지 않는 스터디입니다."
+                                    }
+                                    """)
+                    }))
+    })
+    ResponseEntity<?> createStudyNotice(@PathVariable(value = "studyId") Long studyId,
+                                        @Valid @RequestBody PostReq postReq,
+                                        @AuthenticationPrincipal SecurityUserDetails userDetails);
+
+    @Operation(summary = "스터디 게시글 생성", description = "스터디 게시글 생성 API")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "스터디 게시글 생성 성공",
+                    content = @Content(mediaType = "application/json", examples = {
+                            @ExampleObject(value = """
+                                    {
+                                        "response": "성공적으로 생성되었습니다."
+                                    }
+                                    """)
+                    })),
+            @ApiResponse(responseCode = "403", description = "스터디원이 아님",
+                    content = @Content(mediaType = "application/json", examples = {
+                            @ExampleObject(value = """
+                                    {
+                                        "status": 403,
+                                        "message": "권한이 없습니다."
+                                    }
+                                    """)
+                    })),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 스터디",
+                    content = @Content(mediaType = "application/json", examples = {
+                            @ExampleObject(value = """
+                                    {
+                                        "status": 404,
+                                        "message": "존재하지 않는 스터디입니다."
+                                    }
+                                    """)
+                    }))
+    })
+    ResponseEntity<?> createStudyPost(@PathVariable(value = "studyId") Long studyId,
+                                      @Valid @RequestBody PostReq postReq,
+                                      @AuthenticationPrincipal SecurityUserDetails userDetails);
+
+    @Operation(summary = "스터디 공지 목록 조회", description = "스터디 공지 목록 조회 API")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "스터디 공지 목록 조회 성공",
+                    content = @Content(mediaType = "application/json", examples = {
+                            @ExampleObject(value = """
+                                    {
+                                        "totalPages": 1,
+                                        "totalElements": 1,
+                                        "first": true,
+                                        "last": true,
+                                        "size": 20,
+                                        "content": [
+                                            {
+                                                "postId": 41,
+                                                "postTitle": "공지 테스트123",
+                                                "nickname": "어드민",
+                                                "categoryName": "스터디",
+                                                "createdAt": "2024-11-19T18:26:22.185715",
+                                                "likeCount": 0,
+                                                "viewCount": 0
+                                            }
+                                        ],
+                                        "number": 0,
+                                        "sort": {
+                                            "empty": true,
+                                            "unsorted": true,
+                                            "sorted": false
+                                        },
+                                        "pageable": {
+                                            "pageNumber": 0,
+                                            "pageSize": 20,
+                                            "sort": {
+                                                "empty": true,
+                                                "unsorted": true,
+                                                "sorted": false
+                                            },
+                                            "offset": 0,
+                                            "unpaged": false,
+                                            "paged": true
+                                        },
+                                        "numberOfElements": 1,
+                                        "empty": false
+                                    }
+                                    """)
+                    })),
+            @ApiResponse(responseCode = "403", description = "스터디원이 아님",
+                    content = @Content(mediaType = "application/json", examples = {
+                            @ExampleObject(value = """
+                                    {
+                                        "status": 403,
+                                        "message": "권한이 없습니다."
+                                    }
+                                    """)
+                    })),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 스터디",
+                    content = @Content(mediaType = "application/json", examples = {
+                            @ExampleObject(value = """
+                                    {
+                                        "status": 404,
+                                        "message": "존재하지 않는 스터디입니다."
+                                    }
+                                    """)
+                    }))
+    })
+    ResponseEntity<?> getStudyNotices(@PathVariable(value = "studyId") Long studyId,
+                                      @RequestParam(value = "keyword", required = false) String keyword,
+                                      @RequestParam(value = "sort", defaultValue = "DATE_DESC") PostSortType sort,
+                                      @RequestParam(value = "page", defaultValue = "0") @Min(0) Integer page,
+                                      @AuthenticationPrincipal SecurityUserDetails userDetails);
+
+    @Operation(summary = "스터디 게시글 목록 조회", description = "스터디 게시글 목록 조회 API")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "스더티 게시글 목록 조회 성공",
+                    content = @Content(mediaType = "application/json", examples = {
+                            @ExampleObject(value = """
+                                    {
+                                        "totalPages": 1,
+                                        "totalElements": 1,
+                                        "first": true,
+                                        "last": true,
+                                        "size": 20,
+                                        "content": [
+                                            {
+                                                "postId": 42,
+                                                "postTitle": "스터디 게시글 테스트",
+                                                "nickname": "어드민",
+                                                "categoryName": "스터디",
+                                                "createdAt": "2024-11-19T18:26:31.51824",
+                                                "likeCount": 0,
+                                                "viewCount": 0
+                                            }
+                                        ],
+                                        "number": 0,
+                                        "sort": {
+                                            "empty": true,
+                                            "sorted": false,
+                                            "unsorted": true
+                                        },
+                                        "numberOfElements": 1,
+                                        "pageable": {
+                                            "pageNumber": 0,
+                                            "pageSize": 20,
+                                            "sort": {
+                                                "empty": true,
+                                                "sorted": false,
+                                                "unsorted": true
+                                            },
+                                            "offset": 0,
+                                            "paged": true,
+                                            "unpaged": false
+                                        },
+                                        "empty": false
+                                    }
+                                    """)
+                    })),
+            @ApiResponse(responseCode = "403", description = "스터디원이 아님",
+                    content = @Content(mediaType = "application/json", examples = {
+                            @ExampleObject(value = """
+                                    {
+                                        "status": 403,
+                                        "message": "권한이 없습니다."
+                                    }
+                                    """)
+                    })),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 스터디",
+                    content = @Content(mediaType = "application/json", examples = {
+                            @ExampleObject(value = """
+                                    {
+                                        "status": 404,
+                                        "message": "존재하지 않는 스터디입니다."
+                                    }
+                                    """)
+                    }))
+    })
+    ResponseEntity<?> getStudyPosts(@PathVariable(value = "studyId") Long studyId,
+                                    @RequestParam(value = "keyword", required = false) String keyword,
+                                    @RequestParam(value = "sort", defaultValue = "DATE_DESC") PostSortType sort,
+                                    @RequestParam(value = "page", defaultValue = "0") @Min(0) Integer page,
+                                    @AuthenticationPrincipal SecurityUserDetails userDetails);
 }
