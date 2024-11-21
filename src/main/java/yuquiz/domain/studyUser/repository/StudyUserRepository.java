@@ -18,5 +18,5 @@ public interface StudyUserRepository extends JpaRepository<StudyUser, Long> {
 
     List<StudyUser> findByStudyIdAndState(Long studyId, UserState state);
 
-    void deleteByStudy_IdAndUser_Id(Long studyId, Long userId);
+    int deleteByStudy_IdAndUser_Id(Long studyId, Long userId);
 }
