@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import yuquiz.common.api.SuccessRes;
 import yuquiz.domain.notification.dto.DisplayType;
 import yuquiz.domain.notification.dto.NotificationRes;
 import yuquiz.domain.notification.dto.NotificationSortType;
@@ -22,9 +23,9 @@ public class NotificationController {
 
     @GetMapping("/users/my/alert")
     public ResponseEntity<?> getAllMyAlert(@AuthenticationPrincipal SecurityUserDetails userDetails,
-                                           @RequestParam(value = "page") Integer page,
-                                           @RequestParam(value = "sort") NotificationSortType sort,
-                                           @RequestParam(value = "view") DisplayType displayType) {
+                                           @RequestParam(value = "page", defaultValue = "0") Integer page,
+                                           @RequestParam(value = "sort", defaultValue = "DATE_DESC") NotificationSortType sort,
+                                           @RequestParam(value = "view", defaultValue = "UNCHECKED") DisplayType displayType) {
 
         Page<NotificationRes> notifications = notificationService.getAllNotification(userDetails.getId(), page, sort, displayType);
 
@@ -35,5 +36,14 @@ public class NotificationController {
     public SseEmitter subscribe(@AuthenticationPrincipal SecurityUserDetails userDetails,
                                 @RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId) {
         return notificationService.subscribe(userDetails.getId(), lastEventId);
+    }
+
+    @PostMapping("/users/my/alert")
+    public ResponseEntity<?> readNotification(@RequestBody Long[] notifications,
+                                              @AuthenticationPrincipal SecurityUserDetails userDetails) {
+
+        notificationService.readNotification(notifications, userDetails.getId());
+
+        return ResponseEntity.status(HttpStatus.OK).body(SuccessRes.from("성공적으로 처리하였습니다."));
     }
 }

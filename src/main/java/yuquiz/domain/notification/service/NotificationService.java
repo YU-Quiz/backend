@@ -12,6 +12,7 @@ import yuquiz.domain.notification.dto.*;
 import yuquiz.domain.notification.entity.Notification;
 import yuquiz.domain.notification.repository.EmitterRepository;
 import yuquiz.domain.notification.repository.NotificationRepository;
+import yuquiz.domain.study.exception.NotificationExceptionCode;
 import yuquiz.domain.user.entity.User;
 import yuquiz.domain.user.exception.UserExceptionCode;
 import yuquiz.domain.user.repository.UserRepository;
@@ -50,6 +51,15 @@ public class NotificationService {
         }
 
         return notifications.map(NotificationRes::fromEntity);
+    }
+
+    @Transactional
+    public void readNotification(Long[] notifications, Long userId) {
+        if (notifications == null || notifications.length == 0) {
+            throw new CustomException(NotificationExceptionCode.INVALID_REQUEST);
+        }
+
+        notificationRepository.readNotificationsWithValidation(notifications, userId);
     }
 
     public SseEmitter subscribe(Long userId, String lastEventId) {
