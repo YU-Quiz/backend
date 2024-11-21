@@ -16,10 +16,9 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     Page<Notification> findAllByUser(User user, Pageable pageable);
 
     @Modifying
-    @Query(value = "UPDATE Notification " +
-            "SET isChecked = true " +
-            "WHERE id IN :notifications AND user_id = :userId",
-            nativeQuery = true)
+    @Query(value = "UPDATE Notification n " +
+            "SET n.isChecked = true " +
+            "WHERE n.id IN :notifications AND n.user.id = :userId")
     void readNotificationsWithValidation(@Param("notifications") Long[] notifications,
                                               @Param("userId") Long userId);
 }
