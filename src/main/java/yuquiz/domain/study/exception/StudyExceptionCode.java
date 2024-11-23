@@ -7,6 +7,7 @@ import yuquiz.common.exception.exceptionCode.ExceptionCode;
 public enum StudyExceptionCode implements ExceptionCode {
 
     INVALID_ID(404, "존재하지 않는 스터디입니다."),
+    INVALID_USER(404, "존재하지 않는 사용자입니다."),
     UNAUTHORIZED_ACTION(403, "권한이 없습니다."),
     ALREADY_REGISTERED(409, "이미 가입되었습니다."),
     STUDY_FULL(409, "스터디의 최대 인원수를 초과하였습니다."),

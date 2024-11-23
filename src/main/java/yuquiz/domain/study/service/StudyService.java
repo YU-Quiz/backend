@@ -202,14 +202,18 @@ public class StudyService {
         Study study = studyRepository.findById(studyId)
                 .orElseThrow(() -> new CustomException(StudyExceptionCode.INVALID_ID));
 
-        study.decreaseUser();
 
-        studyUserRepository.deleteByStudy_IdAndUser_Id(studyId, deleteId);
+        int result = studyUserRepository.deleteByStudy_IdAndUser_Id(studyId, deleteId);
+
+        if (result != 1) {
+            throw new CustomException(StudyExceptionCode.INVALID_USER);
+        }
 
         // todo : 사용자 조회 없이 처리할 방법은?
         User user = userRepository.findById(deleteId)
                 .orElseThrow(() -> new CustomException(UserExceptionCode.INVALID_USERID));
 
+        study.decreaseUser();
         studyNotification(study, user, NotificationType.STUDY_KICKED, "스터디에서 강제 퇴장 당했습니다.");
     }
 
