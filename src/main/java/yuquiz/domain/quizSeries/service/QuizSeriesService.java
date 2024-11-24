@@ -43,8 +43,8 @@ public class QuizSeriesService {
         Page<Quiz> quizzes = quizSeriesRepository.getQuizzesBySeriesId(seriesId, pageable, QuizSortType.DATE_DESC.getOrder());
 
         return quizzes.map(quiz -> {
-            boolean isSolved = triedQuizRepository.getIsSolvedByUser_IdAndQuiz_Id(quiz.getId(), userId)
-                    .orElse(false);
+            Boolean isSolved = triedQuizRepository.getIsSolvedByUser_IdAndQuiz_Id(quiz.getId(), userId)
+                    .orElse(null);
 
             return QuizSummaryRes.fromEntity(quiz, isSolved);
         });
