@@ -37,8 +37,9 @@ public class Subject {
     private Major major;
 
     @Builder
-    public Subject(String subjectName, String subjectCode) {
+    public Subject(String subjectName, String subjectCode, Major major) {
         this.subjectName = subjectName;
         this.subjectCode = subjectCode;
+        this.major = major;
     }
 }
