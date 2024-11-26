@@ -36,13 +36,13 @@ public class SubjectService {
         Workbook workbook = WorkbookFactory.create(file.getInputStream());
         Sheet sheet = workbook.getSheetAt(0);
 
-        Major major = majorRepository.findByMajorName("컴퓨터공학과")
-                .orElseThrow(IOException::new);
 
         for (Row row : sheet) {
             if (row.getRowNum() == 0 || row.getRowNum() == 1 || row.getRowNum() == 2 || row.getRowNum() == 3) {
                 continue;
             }
+            Major major = majorRepository.findByMajorName(row.getCell(9).getStringCellValue())
+                    .orElseThrow(IOException::new);
 
             Subject subject = Subject.builder()
                     .subjectCode(String.valueOf(row.getCell(0).getNumericCellValue()).substring(0,4))
@@ -54,6 +54,7 @@ public class SubjectService {
 
             System.out.println(String.valueOf(row.getCell(0).getNumericCellValue()).substring(0,4));
             System.out.println(row.getCell(3).getStringCellValue());
+            System.out.println(major.getMajorName());
             System.out.println("-------------------------");
         }
 
