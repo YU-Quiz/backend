@@ -102,8 +102,9 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
 
     private BooleanExpression categoryEqual(Long categoryId) {
         if (categoryId == null) {
-            return null;
+            return post.category.id.ne(3L);
         }
+
         return post.category.id.eq(categoryId);
     }
 }

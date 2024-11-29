@@ -17,6 +17,7 @@ public class CategoryService {
     public List<CategorySummaryRes> getCategories() {
 
         return categoryRepository.findAll().stream()
+                .filter(category -> category.getId() != 3)
                 .map(CategorySummaryRes::fromEntity)
                 .collect(Collectors.toList());
     }
