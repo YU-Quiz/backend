@@ -276,7 +276,7 @@ public class StudyService {
     public void studyNotification(Study study, User user, NotificationType type, String content) {
 
         String message = "\"" + study.getStudyName() + "\"" + content;
-        String url = "/api/v1/study/" + study.getId();
+        String url = "/study/" + study.getId();
 
         notificationService.send(user, type, message, url);
     }
