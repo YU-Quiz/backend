@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import yuquiz.common.api.SuccessRes;
 import yuquiz.domain.quiz.api.QuizApi;
 import yuquiz.domain.quiz.dto.quiz.*;
@@ -24,9 +25,11 @@ public class QuizController implements QuizApi {
     private final QuizService quizService;
 
     @PostMapping
-    public ResponseEntity<?> createQuiz(@Valid @RequestBody QuizReq quizReq, @AuthenticationPrincipal SecurityUserDetails userDetails) {
+    public ResponseEntity<?> createQuiz(@Valid @RequestBody QuizReq quizReq,
+                                        @RequestPart(value = "image") MultipartFile image,
+                                        @AuthenticationPrincipal SecurityUserDetails userDetails) {
 
-        quizService.createQuiz(quizReq, userDetails.getId());
+        quizService.createQuiz(quizReq, userDetails.getId(), image);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(SuccessRes.from("퀴즈 생성 성공."));
     }

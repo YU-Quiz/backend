@@ -122,4 +122,8 @@ public class Quiz extends BaseTimeEntity {
         this.quizType = quizReq.quizType();
         this.subject = subject;
     }
+
+    public void uploadImage(String url) {
+        this.quizImgs.add(url);
+    }
 }

@@ -77,7 +77,7 @@ class QuizControllerTest {
         //given
         QuizReq quizReq = new QuizReq("test", "test", List.of("testImgURL"), "2", QuizType.MULTIPLE_CHOICE, List.of("1", "2", "3"), 2L);
 
-        doNothing().when(quizService).createQuiz(any(QuizReq.class), eq(userDetails.getId()));
+//        doNothing().when(quizService).createQuiz(any(QuizReq.class), eq(userDetails.getId()));
 
         //when
         ResultActions resultActions = mockMvc.perform(

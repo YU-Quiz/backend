@@ -15,6 +15,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import yuquiz.domain.quiz.dto.quiz.AnswerReq;
 import yuquiz.domain.quiz.dto.quiz.QuizReq;
 import yuquiz.domain.quiz.dto.quiz.QuizSortType;
@@ -45,7 +46,9 @@ public interface QuizApi {
                                     """)
                     }))
     })
-    ResponseEntity<?> createQuiz(@Valid @RequestBody QuizReq quizReq, @AuthenticationPrincipal SecurityUserDetails userDetails);
+    ResponseEntity<?> createQuiz(@Valid @RequestBody QuizReq quizReq,
+                                 MultipartFile image,
+                                 @AuthenticationPrincipal SecurityUserDetails userDetails);
 
     @Operation(summary = "퀴즈 삭제", description = "퀴즈 삭제 관련 API")
     @ApiResponses({

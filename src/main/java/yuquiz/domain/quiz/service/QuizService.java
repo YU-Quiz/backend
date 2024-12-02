@@ -6,7 +6,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import yuquiz.common.exception.CustomException;
+import yuquiz.common.s3.ImageType;
+import yuquiz.common.s3.service.StorageService;
 import yuquiz.domain.quiz.dto.quiz.*;
 import yuquiz.domain.quiz.repository.PinnedQuizRepository;
 import yuquiz.domain.quiz.entity.Quiz;
@@ -37,20 +40,23 @@ public class QuizService {
     private final PinnedQuizRepository pinnedQuizRepository;
     private final LikedQuizRepository likedQuizRepository;
     private final ReportRepository reportRepository;
+    private final StorageService storageService;
 
     private static final Integer QUIZ_PER_PAGE = 20;
 
     @Transactional
-    public void createQuiz(QuizReq quizReq, Long userId) {
+    public void createQuiz(QuizReq quizReq, Long userId, MultipartFile image) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(UserExceptionCode.INVALID_USERID));
 
         Subject subject = subjectRepository.findById(quizReq.subjectId())
                 .orElseThrow(() -> new CustomException(SubjectExceptionCode.INVALID_ID));
 
-
         Quiz quiz = quizReq.toEntity(user, subject);
-        quizRepository.save(quiz);
+        Quiz savedQuiz = quizRepository.save(quiz);
+
+        String imageUrl = storageService.uploadImage(image, savedQuiz.getId(), ImageType.QUIZ);
+        quiz.uploadImage(imageUrl);
     }
 
     @Transactional
