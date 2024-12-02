@@ -25,8 +25,8 @@ public class QuizController implements QuizApi {
     private final QuizService quizService;
 
     @PostMapping
-    public ResponseEntity<?> createQuiz(@Valid @RequestBody QuizReq quizReq,
-                                        @RequestPart(value = "image") MultipartFile image,
+    public ResponseEntity<?> createQuiz(@Valid @RequestPart(value = "quizReq") QuizReq quizReq,
+                                        @RequestPart (value = "image") MultipartFile image,
                                         @AuthenticationPrincipal SecurityUserDetails userDetails) {
 
         quizService.createQuiz(quizReq, userDetails.getId(), image);

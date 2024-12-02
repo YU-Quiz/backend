@@ -123,7 +123,7 @@ public class Quiz extends BaseTimeEntity {
         this.subject = subject;
     }
 
-    public void uploadImage(String url) {
-        this.quizImgs.add(url);
+    public void uploadImage(List<String> url) {
+        this.quizImgs = url;
     }
 }

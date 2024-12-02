@@ -26,6 +26,7 @@ import yuquiz.domain.user.entity.User;
 import yuquiz.domain.user.exception.UserExceptionCode;
 import yuquiz.domain.user.repository.UserRepository;
 
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -56,7 +57,7 @@ public class QuizService {
         Quiz savedQuiz = quizRepository.save(quiz);
 
         String imageUrl = storageService.uploadImage(image, savedQuiz.getId(), ImageType.QUIZ);
-        quiz.uploadImage(imageUrl);
+        quiz.uploadImage(List.of(imageUrl));
     }
 
     @Transactional
