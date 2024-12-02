@@ -11,6 +11,7 @@ public enum StudyExceptionCode implements ExceptionCode {
     UNAUTHORIZED_ACTION(403, "권한이 없습니다."),
     ALREADY_REGISTERED(409, "이미 가입되었습니다."),
     STUDY_FULL(409, "스터디의 최대 인원수를 초과하였습니다."),
+    EXPIRED_SIGNUP_PERIOD(403, "스터디 가입 기간이 지났습니다."),
     REQUEST_NOT_EXIST(404, "존재하지 않는 가입 신청입니다.");
 
 

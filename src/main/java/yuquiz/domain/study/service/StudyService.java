@@ -42,6 +42,7 @@ import yuquiz.domain.user.entity.User;
 import yuquiz.domain.user.exception.UserExceptionCode;
 import yuquiz.domain.user.repository.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -129,6 +130,10 @@ public class StudyService {
 
         Study study = studyRepository.findById(studyId)
                 .orElseThrow(() -> new CustomException(StudyExceptionCode.INVALID_ID));
+
+        if (study.getRegisterDuration().isBefore(LocalDateTime.now())) {
+            throw new CustomException(StudyExceptionCode.EXPIRED_SIGNUP_PERIOD);
+        }
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(UserExceptionCode.INVALID_USERID));
@@ -276,7 +281,7 @@ public class StudyService {
     public void studyNotification(Study study, User user, NotificationType type, String content) {
 
         String message = "\"" + study.getStudyName() + "\"" + content;
-        String url = "/api/v1/study/" + study.getId();
+        String url = "/study/" + study.getId();
 
         notificationService.send(user, type, message, url);
     }

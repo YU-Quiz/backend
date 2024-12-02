@@ -59,7 +59,7 @@ public class ReportService {
     public void reportNotification(Quiz quiz) {
         User user = quiz.getWriter();
         String content = "\"" + quiz.getTitle() + "\" 퀴즈에 대한 신고가 있습니다.";
-        String url = "/api/v1/quizzes/" + quiz.getId();
+        String url = "/quiz/play/" + quiz.getId();
 
         notificationService.send(user, NotificationType.REPORT, content, url);
     }
