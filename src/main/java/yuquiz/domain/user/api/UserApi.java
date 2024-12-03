@@ -218,6 +218,15 @@ public interface UserApi {
                                         }
                                     """)
                     })),
+            @ApiResponse(responseCode = "409", description = "이미 존재하는 이메일",
+                    content = @Content(mediaType = "application/json", examples = {
+                            @ExampleObject(value = """
+                                        {
+                                            "status": 409,
+                                            "message": "이미 존재하는 이메일입니다."
+                                        }
+                                    """)
+                    })),
             @ApiResponse(responseCode = "429", description = "1분 이내에 전송한 이력 존재",
                     content = @Content(mediaType = "application/json", examples = {
                             @ExampleObject(value = """
@@ -246,15 +255,6 @@ public interface UserApi {
                                         {
                                             "status": 400,
                                             "message": "인증번호가 일치하지 않습니다."
-                                        }
-                                    """)
-                    })),
-            @ApiResponse(responseCode = "409", description = "이미 존재하는 이메일",
-                    content = @Content(mediaType = "application/json", examples = {
-                            @ExampleObject(value = """
-                                        {
-                                            "status": 409,
-                                            "message": "이미 존재하는 이메일입니다."
                                         }
                                     """)
                     })),
