@@ -36,6 +36,10 @@ public class MailCodeService {
     /* 회원가입 인증번호 확인 메서드 */
     public void sendCodeToMail(String email) {
 
+        if (userRepository.existsByEmail(email)) {
+            throw new CustomException(UserExceptionCode.EXIST_EMAIL);
+        }
+
         if (!checkRetryEmail(email)) {
             throw new CustomException(UserExceptionCode.ALREADY_MAIL_REQUEST);
         }
@@ -77,10 +81,6 @@ public class MailCodeService {
 
     /* 인증번호 확인 메서드 */
     public boolean verifiedCode(CodeVerificationReq codeReq) {
-
-        if (userRepository.existsByEmail(codeReq.email())) {
-            throw new CustomException(UserExceptionCode.EXIST_EMAIL);
-        }
 
         String key = CODE_KEY_PREFIX + codeReq.email();
         Optional<String> storedCode = Optional.ofNullable((String) redisUtil.get(key));
