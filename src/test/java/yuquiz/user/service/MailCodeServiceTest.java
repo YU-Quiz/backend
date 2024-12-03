@@ -91,7 +91,6 @@ public class MailCodeServiceTest {
     @DisplayName("인증 코드 확인 테스트 - 성공")
     void verifiedCodeSuccessTest() {
         // given
-        when(userRepository.existsByEmail(anyString())).thenReturn(false);
         when(redisUtil.get(anyString())).thenReturn(testCode);
 
         // when
@@ -110,7 +109,7 @@ public class MailCodeServiceTest {
 
         // when
         CustomException exception = assertThrows(CustomException.class, () -> {
-            mailCodeService.verifiedCode(codeReq);
+            mailCodeService.sendCodeToMail(testEmail);
         });
 
         // then
@@ -122,7 +121,6 @@ public class MailCodeServiceTest {
     @DisplayName("인증 코드 확인 테스트 - Redis에 코드 없음 (유효시간 만료)")
     void verifiedCodeExpiredTest() {
         // given
-        when(userRepository.existsByEmail(anyString())).thenReturn(false);
         when(redisUtil.get(anyString())).thenReturn(null);
 
         // when
@@ -139,7 +137,6 @@ public class MailCodeServiceTest {
     @DisplayName("인증 코드 확인 테스트 - 코드 불일치")
     void verifiedCodeMismatchTest() {
         // given
-        when(userRepository.existsByEmail(anyString())).thenReturn(false);
         when(redisUtil.get(anyString())).thenReturn("654321"); // 다른 코드
 
         // when
