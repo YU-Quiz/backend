@@ -56,8 +56,11 @@ public class QuizService {
         Quiz quiz = quizReq.toEntity(user, subject);
         Quiz savedQuiz = quizRepository.save(quiz);
 
-        String imageUrl = storageService.uploadImage(image, savedQuiz.getId(), ImageType.QUIZ);
-        quiz.uploadImage(List.of(imageUrl));
+        if (!image.isEmpty()) {
+            String imageUrl = storageService.uploadImage(image, savedQuiz.getId(), ImageType.QUIZ);
+            quiz.uploadImage(List.of(imageUrl));
+        }
+
     }
 
     @Transactional
