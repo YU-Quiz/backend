@@ -117,8 +117,8 @@ public class StudyService {
                 .orElseThrow(() -> new CustomException(StudyExceptionCode.INVALID_ID));
 
         return studyUserRepository.findStudyUserByStudy_IdAndUser_IdAndState(studyId, userId, UserState.REGISTERED)
-                .map(studyUser -> StudyRes.fromEntity(study, true, studyUser.getRole()))
-                .orElseGet(() -> StudyRes.fromEntity(study, false, null));
+                .map(studyUser -> StudyRes.fromEntity(study, true, studyUser.getRole(), studyUser.getState()))
+                .orElseGet(() -> StudyRes.fromEntity(study, false, null, null));
     }
 
     @Transactional
@@ -233,17 +233,17 @@ public class StudyService {
 
     @Transactional
     public void createStudyPost(PostReq postReq, Long userId, Long studyId, boolean isNotice) {
-      boolean isAuthorized;
-      
-      if (isNotice) {
-          isAuthorized = validateLeader(studyId, userId);
-      } else {
-          isAuthorized = studyUserRepository.existsByStudy_IdAndUser_IdAndState(studyId, userId, UserState.REGISTERED);
-      }
-      
-      if (!isAuthorized) {
-          throw new CustomException(StudyExceptionCode.UNAUTHORIZED_ACTION);
-      }
+        boolean isAuthorized;
+
+        if (isNotice) {
+            isAuthorized = validateLeader(studyId, userId);
+        } else {
+            isAuthorized = studyUserRepository.existsByStudy_IdAndUser_IdAndState(studyId, userId, UserState.REGISTERED);
+        }
+
+        if (!isAuthorized) {
+            throw new CustomException(StudyExceptionCode.UNAUTHORIZED_ACTION);
+        }
 
         Study study = studyRepository.findById(studyId)
                 .orElseThrow(() -> new CustomException(StudyExceptionCode.INVALID_ID));
@@ -267,7 +267,7 @@ public class StudyService {
 
         Pageable pageable = PageRequest.of(page, POST_PER_PAGE);
 
-        Page<Post> posts = postRepository.getPostsByStudy(studyId, type, keyword,3L, pageable, sort);
+        Page<Post> posts = postRepository.getPostsByStudy(studyId, type, keyword, 3L, pageable, sort);
 
         return posts.map(PostSummaryRes::fromEntity);
     }
