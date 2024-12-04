@@ -3,6 +3,7 @@ package yuquiz.domain.study.dto;
 import yuquiz.domain.study.entity.Study;
 import yuquiz.domain.study.entity.StudyState;
 import yuquiz.domain.studyUser.entity.StudyRole;
+import yuquiz.domain.studyUser.entity.UserState;
 
 import java.time.LocalDateTime;
 
@@ -16,9 +17,10 @@ public record StudyRes(
         Integer curUser,
         StudyState state,
         boolean isMember,
-        StudyRole role
+        StudyRole role,
+        UserState userState
 ) {
-    public static StudyRes fromEntity(Study study, boolean isMember, StudyRole role) {
+    public static StudyRes fromEntity(Study study, boolean isMember, StudyRole role, UserState userState) {
         return new StudyRes(
                 study.getId(),
                 study.getChatRoom().getId(),
@@ -29,7 +31,8 @@ public record StudyRes(
                 study.getCurrentUser(),
                 study.getState(),
                 isMember,
-                role
+                role,
+                userState
         );
     }
 }
