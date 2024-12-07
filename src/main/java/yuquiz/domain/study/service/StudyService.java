@@ -117,7 +117,13 @@ public class StudyService {
                 .orElseThrow(() -> new CustomException(StudyExceptionCode.INVALID_ID));
 
         return studyUserRepository.findStudyUserByStudy_IdAndUser_Id(studyId, userId)
-                .map(studyUser -> StudyRes.fromEntity(study, true, studyUser.getRole(), studyUser.getState()))
+                .map(studyUser -> {
+                    if (studyUser.getState() == UserState.PENDING) {
+                        return StudyRes.fromEntity(study, false, null, studyUser.getState());
+                    } else {
+                        return StudyRes.fromEntity(study, true, studyUser.getRole(), studyUser.getState());
+                    }
+                })
                 .orElseGet(() -> StudyRes.fromEntity(study, false, null, null));
     }
 
