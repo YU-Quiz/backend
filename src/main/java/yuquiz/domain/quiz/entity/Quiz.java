@@ -34,10 +34,11 @@ public class Quiz extends BaseTimeEntity {
     private String question;
 
     @Convert(converter = StringListConverter.class)
+    @Column(name = "choices", length = 500)
     private List<String> choices;
 
     @Convert(converter = StringListConverter.class)
-    @Column(name = "quiz_imgs")
+    @Column(name = "quiz_imgs", length = 500)
     private List<String> quizImgs;
 
     @NotNull
