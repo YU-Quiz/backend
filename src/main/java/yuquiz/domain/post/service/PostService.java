@@ -19,6 +19,7 @@ import yuquiz.domain.post.dto.PostSummaryRes;
 import yuquiz.domain.post.entity.Post;
 import yuquiz.domain.post.exception.PostExceptionCode;
 import yuquiz.domain.post.repository.PostRepository;
+import yuquiz.domain.user.entity.Role;
 import yuquiz.domain.user.entity.User;
 import yuquiz.domain.user.exception.UserExceptionCode;
 import yuquiz.domain.user.repository.UserRepository;
@@ -33,6 +34,7 @@ public class PostService {
     private final LikedPostRepository likedPostRepository;
 
     private final Integer POST_PER_PAGE = 20;
+    private final String ANNOUNCEMENTS = "공지게시판";
 
     @Transactional
     public Post createPost(PostReq postReq, Long userId) {
@@ -42,6 +44,10 @@ public class PostService {
 
         Category category = categoryRepository.findById(postReq.categoryId())
                 .orElseThrow(() -> new CustomException(CategoryExceptionCode.INVALID_ID));
+
+        if (!user.getRole().equals(Role.ADMIN) && category.getCategoryName().equals(ANNOUNCEMENTS)) {
+            throw new CustomException(PostExceptionCode.UNAUTHORIZED_ACTION);
+        }
 
         Post post = postReq.toEntity(user, category);
         return postRepository.save(post);

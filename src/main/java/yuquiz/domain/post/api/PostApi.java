@@ -39,6 +39,15 @@ public interface PostApi {
                                         "categoryId": "카테고리는 필수 입력입니다."
                                     }
                                     """)
+                    })),
+            @ApiResponse(responseCode = "403", description = "권한 없음",
+                    content = @Content(mediaType = "application/json", examples = {
+                            @ExampleObject(value = """
+                                    {
+                                        "status": 403,
+                                        "message": "권한이 없습니다."
+                                    }
+                                    """)
                     }))
     })
     ResponseEntity<?> createPost(@Valid @RequestBody PostReq postReq,
