@@ -116,7 +116,7 @@ public class StudyService {
         Study study = studyRepository.findById(studyId)
                 .orElseThrow(() -> new CustomException(StudyExceptionCode.INVALID_ID));
 
-        return studyUserRepository.findStudyUserByStudy_IdAndUser_IdAndState(studyId, userId, UserState.REGISTERED)
+        return studyUserRepository.findStudyUserByStudy_IdAndUser_Id(studyId, userId)
                 .map(studyUser -> StudyRes.fromEntity(study, true, studyUser.getRole(), studyUser.getState()))
                 .orElseGet(() -> StudyRes.fromEntity(study, false, null, null));
     }
