@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import yuquiz.common.entity.BaseTimeEntity;
 import yuquiz.domain.category.entity.Category;
 import yuquiz.domain.comment.entity.Comment;
+import yuquiz.domain.like.entity.LikedPost;
 import yuquiz.domain.post.dto.PostReq;
 import yuquiz.domain.studyPost.entity.StudyPost;
 import yuquiz.domain.studyUser.entity.StudyUser;
@@ -43,6 +44,9 @@ public class Post extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     private List<StudyPost> studyPosts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    private List<LikedPost> likedPosts = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
